@@ -1,0 +1,42 @@
+[
+    {
+        "id": "1",
+        "department": "Engineering",
+        "employeeName": "Person A",
+        "position": "Senior Engineer",
+        "startDate": "2020-01-15",
+        "status": "Active"
+    },
+    {
+        "id": "2",
+        "department": "Marketing",
+        "employeeName": "Person B",
+        "position": "Marketing Manager",
+        "startDate": "2019-06-01",
+        "status": "Active"
+    },
+    {
+        "id": "3",
+        "department": "Engineering",
+        "employeeName": "Person C",
+        "position": "Junior Engineer",
+        "startDate": "2022-03-10",
+        "status": "Active"
+    },
+    {
+        "id": "4",
+        "department": "Sales",
+        "employeeName": "Person D",
+        "position": "Sales Representative",
+        "startDate": "2021-09-20",
+        "status": "Active"
+    },
+    {
+        "id": "5",
+        "department": "Marketing",
+        "employeeName": "Person E",
+        "position": "Content Specialist",
+        "startDate": "2023-01-05",
+        "status": "Active"
+    }
+]

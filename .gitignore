@@ -1,0 +1,34 @@
+## Azure Functions
+bin/
+obj/
+local.settings.json
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+## Bicep
+*.zip
+
+## IDE
+.DS_Store
+.idea/
+*.swp
+*.swo
+
+## Environment
+.env
+*.local
+
+## Logs
+*.log

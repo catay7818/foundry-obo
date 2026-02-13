@@ -1,0 +1,42 @@
+[
+    {
+        "id": "1",
+        "fiscalYear": "2023",
+        "category": "Operating Expenses",
+        "amount": 125000,
+        "quarter": "Q1",
+        "approved": true
+    },
+    {
+        "id": "2",
+        "fiscalYear": "2023",
+        "category": "Capital Expenditure",
+        "amount": 250000,
+        "quarter": "Q1",
+        "approved": true
+    },
+    {
+        "id": "3",
+        "fiscalYear": "2023",
+        "category": "Operating Expenses",
+        "amount": 135000,
+        "quarter": "Q2",
+        "approved": true
+    },
+    {
+        "id": "4",
+        "fiscalYear": "2024",
+        "category": "Research and Development",
+        "amount": 180000,
+        "quarter": "Q1",
+        "approved": false
+    },
+    {
+        "id": "5",
+        "fiscalYear": "2024",
+        "category": "Marketing",
+        "amount": 95000,
+        "quarter": "Q1",
+        "approved": true
+    }
+]

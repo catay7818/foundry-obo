@@ -1,0 +1,42 @@
+[
+    {
+        "id": "1",
+        "region": "West",
+        "product": "Widget A",
+        "quantity": 150,
+        "revenue": 15000,
+        "quarter": "Q1"
+    },
+    {
+        "id": "2",
+        "region": "East",
+        "product": "Widget B",
+        "quantity": 200,
+        "revenue": 24000,
+        "quarter": "Q1"
+    },
+    {
+        "id": "3",
+        "region": "North",
+        "product": "Widget C",
+        "quantity": 175,
+        "revenue": 19250,
+        "quarter": "Q1"
+    },
+    {
+        "id": "4",
+        "region": "South",
+        "product": "Widget A",
+        "quantity": 225,
+        "revenue": 22500,
+        "quarter": "Q2"
+    },
+    {
+        "id": "5",
+        "region": "West",
+        "product": "Widget B",
+        "quantity": 300,
+        "revenue": 36000,
+        "quarter": "Q2"
+    }
+]

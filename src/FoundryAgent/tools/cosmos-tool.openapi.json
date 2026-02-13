@@ -1,0 +1,179 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Cosmos DB Data Access API",
+        "description": "API for querying Cosmos DB containers with user-level authorization",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://{functionAppName}.azurewebsites.net/api",
+            "description": "Azure Function App endpoint",
+            "variables": {
+                "functionAppName": {
+                    "default": "foundry-dev-func",
+                    "description": "Function App name from deployment"
+                }
+            }
+        }
+    ],
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ],
+    "paths": {
+        "/containers/query": {
+            "post": {
+                "summary": "Query a Cosmos DB container",
+                "description": "Executes a query against a specified Cosmos DB container. Access is restricted based on user permissions.",
+                "operationId": "queryContainer",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ContainerQueryRequest"
+                            },
+                            "examples": {
+                                "salesQuery": {
+                                    "summary": "Query Sales container",
+                                    "value": {
+                                        "containerName": "Sales",
+                                        "query": "SELECT * FROM c WHERE c.region = 'West'"
+                                    }
+                                },
+                                "hrQuery": {
+                                    "summary": "Query HR container",
+                                    "value": {
+                                        "containerName": "HR",
+                                        "query": "SELECT * FROM c WHERE c.department = 'Engineering'"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful query",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContainerQueryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - invalid or missing token"
+                    },
+                    "403": {
+                        "description": "Forbidden - user does not have access to the requested container"
+                    },
+                    "400": {
+                        "description": "Bad request - invalid query syntax"
+                    }
+                }
+            }
+        },
+        "/user/access": {
+            "get": {
+                "summary": "Get user's container access permissions",
+                "description": "Returns the list of containers the authenticated user can access",
+                "operationId": "getUserAccess",
+                "responses": {
+                    "200": {
+                        "description": "User access information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserAccessInfo"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - invalid or missing token"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Azure AD access token for the authenticated user"
+            }
+        },
+        "schemas": {
+            "ContainerQueryRequest": {
+                "type": "object",
+                "required": [
+                    "containerName"
+                ],
+                "properties": {
+                    "containerName": {
+                        "type": "string",
+                        "description": "Name of the Cosmos DB container to query",
+                        "enum": [
+                            "Sales",
+                            "HR",
+                            "Finance"
+                        ]
+                    },
+                    "query": {
+                        "type": "string",
+                        "description": "SQL query to execute (default: SELECT * FROM c)",
+                        "default": "SELECT * FROM c"
+                    }
+                }
+            },
+            "ContainerQueryResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "description": "Whether the query was successful"
+                    },
+                    "errorMessage": {
+                        "type": "string",
+                        "description": "Error message if query failed",
+                        "nullable": true
+                    },
+                    "data": {
+                        "type": "array",
+                        "description": "Query results",
+                        "items": {
+                            "type": "object"
+                        },
+                        "nullable": true
+                    },
+                    "itemCount": {
+                        "type": "integer",
+                        "description": "Number of items returned"
+                    }
+                }
+            },
+            "UserAccessInfo": {
+                "type": "object",
+                "properties": {
+                    "userId": {
+                        "type": "string",
+                        "description": "User's object ID from Azure AD"
+                    },
+                    "allowedContainers": {
+                        "type": "array",
+                        "description": "List of containers the user can access",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
