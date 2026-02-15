@@ -1,5 +1,4 @@
 using Microsoft.Azure.Cosmos;
-using Azure.Core;
 using Azure.Identity;
 
 namespace CosmosDataFunction.Services;

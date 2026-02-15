@@ -1,5 +1,3 @@
-using Microsoft.Identity.Client;
-
 namespace CosmosDataFunction.Services;
 
 public interface IOboTokenProvider
