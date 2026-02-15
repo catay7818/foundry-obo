@@ -52,6 +52,21 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
+// Blob Services for Storage Account
+resource blobServices 'Microsoft.Storage/storageAccounts/blobServices@2023-05-01' = {
+  parent: storageAccount
+  name: 'default'
+}
+
+// Deployment Package Container
+resource deploymentContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-05-01' = {
+  parent: blobServices
+  name: 'deploymentpackage'
+  properties: {
+    publicAccess: 'None'
+  }
+}
+
 // App Service Plan (Flex Consumption for managed identity support)
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: '${projectName}-plan'
