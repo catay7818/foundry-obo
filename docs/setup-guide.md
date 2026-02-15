@@ -74,10 +74,8 @@ echo "6. Grant admin consent"
 
 ```bash
 # Configuration
-PROJECT_NAME="foundry"
-ENVIRONMENT="dev"
-LOCATION="eastus"
-RESOURCE_GROUP="${PROJECT_NAME}-${ENVIRONMENT}-rg"
+export LOCATION="westus"
+export RESOURCE_GROUP="foundry-obo-rg"
 ```
 
 ### 2.2 Create Resource Group
@@ -88,9 +86,9 @@ az group create \
   --location $LOCATION
 ```
 
-### 2.3 Update Parameters File
+### 2.3 Create Parameters File
 
-Edit `infra/main.bicepparam`:
+Create `infra/main.bicepparam`:
 
 ```bicep
 using 'main.bicep'
