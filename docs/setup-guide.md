@@ -113,12 +113,12 @@ az deployment group create \
 
 ```bash
 # Get deployment outputs
-COSMOS_ACCOUNT=$(az deployment group show \
+export COSMOS_ACCOUNT=$(az deployment group show \
   --resource-group $RESOURCE_GROUP \
   --name main \
   --query properties.outputs.cosmosAccountName.value -o tsv)
 
-FUNCTION_APP=$(az deployment group show \
+export FUNCTION_APP=$(az deployment group show \
   --resource-group $RESOURCE_GROUP \
   --name main \
   --query properties.outputs.functionAppName.value -o tsv)
