@@ -171,7 +171,7 @@ Repeat the command for each user you want to grant access.
 
 ### 3.3 Update Function Code
 
-> TODO: should the function code really know about this?
+> TODO: should the function code really know about this? This check is temporarily disabled in the code.
 
 Edit `src/CosmosDataFunction/Functions/GetContainerData.cs`:
 
