@@ -6,6 +6,7 @@ This guide walks through the complete deployment process for the Foundry Agent w
 
 - **Azure Subscription**: Active subscription with permissions to create resources
 - **Azure CLI**: Version 2.50.0 or later ([Install](https://docs.microsoft.com/cli/azure/install-azure-cli))
+- **Azure Function Core Tools**: Version 4.7.0 or later ([Install](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=macos%2Cisolated-process%2Cnode-v4%2Cpython-v2%2Chttp-trigger%2Ccontainer-apps&pivots=programming-language-csharp#install-the-azure-functions-core-tools))
 - **.NET SDK**: Version 8.0 or later ([Install](https://dotnet.microsoft.com/download))
 - **Git**: For cloning the repository
 - **PowerShell** or **Bash**: For running deployment scripts
@@ -212,10 +213,10 @@ func azure functionapp publish $FUNCTION_APP
 
 ```bash
 # Test health endpoint
-FUNCTION_URL=$(az functionapp show \
+export FUNCTION_URL=$(az functionapp show \
   --resource-group $RESOURCE_GROUP \
   --name $FUNCTION_APP \
-  --query defaultHostName -o tsv)
+  --query properties.defaultHostName -o tsv)
 
 echo "Function URL: https://$FUNCTION_URL"
 ```
