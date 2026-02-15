@@ -147,7 +147,7 @@ Run the assignment script to grant a user access to a specific Cosmos DB contain
   --resource-group $RESOURCE_GROUP \
   --cosmos-account $COSMOS_ACCOUNT \
   --user-oid <USER_OBJECT_ID> \
-  --role sales   # sales, hr, finance, or all
+  --role sales
 
 # Or omit the `--role` flag for interactive role selection:
 ./infra/scripts/assign-user-roles.sh \
@@ -164,6 +164,8 @@ Available roles:
 - `hr` - Access to HR container only
 - `finance` - Access to Finance container only
 - `all` - Access to all containers
+- `control-plane` - Control plane access (view data in Azure Portal)
+- `admin` - Control plane + all data plane containers (recommended for administrators)
 
 Repeat the command for each user you want to grant access.
 

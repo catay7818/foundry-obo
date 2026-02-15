@@ -19,13 +19,18 @@ Required Arguments:
   --user-oid, -u          User Object ID from Entra ID
 
 Optional Arguments:
-  --role, -r              Role to assign: sales, hr, finance, all
+  --role, -r              Role to assign:
+                            sales, hr, finance    - Data plane container access
+                            all                   - All data plane containers
+                            control-plane         - Control plane (Azure RBAC) access
+                            admin                 - Control plane + all data plane
                           (interactive selection if not provided)
   --help, -h              Show this help message
 
 Examples:
   ${0##*/} -g foundry-dev-rg -c foundry-cosmos -u abc-123-def
   ${0##*/} -g foundry-dev-rg -c foundry-cosmos -u abc-123-def -r sales
+  ${0##*/} -g foundry-dev-rg -c foundry-cosmos -u abc-123-def -r admin
 EOF
   exit 1
 }
@@ -48,6 +53,16 @@ assign_role() {
     --role-definition-id "$role_id" \
     --principal-id "$USER_OID" \
     --scope "$scope"
+}
+
+assign_control_plane_role() {
+  printf "Assigning control plane (Azure RBAC) access...\n"
+
+  # Assign Built-in Reader role (control plane access) to the Cosmos DB account
+  az role assignment create \
+    --assignee "$USER_OID" \
+    --role "acdd72a7-3385-48ef-bd42-f606fba81ae7" \
+    --scope "$COSMOS_ACCOUNT_ID"
 }
 
 main() {
@@ -143,17 +158,21 @@ main() {
 
   if [[ -z "$ROLE" ]]; then
     printf "\nSelect role to assign:\n"
-    printf "  1) Sales\n"
-    printf "  2) HR\n"
-    printf "  3) Finance\n"
-    printf "  4) All\n"
-    read -rp "Enter choice [1-4]: " choice
+    printf "  1) Sales (data plane)\n"
+    printf "  2) HR (data plane)\n"
+    printf "  3) Finance (data plane)\n"
+    printf "  4) All data plane containers\n"
+    printf "  5) Control plane access only\n"
+    printf "  6) Admin (control plane + all data plane)\n"
+    read -rp "Enter choice [1-6]: " choice
 
     case "$choice" in
       1) ROLE="sales" ;;
       2) ROLE="hr" ;;
       3) ROLE="finance" ;;
       4) ROLE="all" ;;
+      5) ROLE="control-plane" ;;
+      6) ROLE="admin" ;;
       *) err "Invalid choice" ;;
     esac
   fi
@@ -177,8 +196,17 @@ main() {
       assign_role "$HR_ROLE_ID" "HR" "HR"
       assign_role "$FINANCE_ROLE_ID" "Finance" "Finance"
       ;;
+    control-plane)
+      assign_control_plane_role
+      ;;
+    admin)
+      assign_control_plane_role
+      assign_role "$SALES_ROLE_ID" "Sales" "Sales"
+      assign_role "$HR_ROLE_ID" "HR" "HR"
+      assign_role "$FINANCE_ROLE_ID" "Finance" "Finance"
+      ;;
     *)
-      err "Invalid role: $ROLE (must be sales, hr, finance, or all)"
+      err "Invalid role: $ROLE (must be sales, hr, finance, all, control-plane, or admin)"
       ;;
   esac
 
