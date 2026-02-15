@@ -6,6 +6,8 @@ namespace CosmosDataFunction.Services;
 public interface ICosmosDbService
 {
     Task<List<dynamic>> QueryContainerAsync(string containerName, string query);
+    Task<bool> ItemExistsAsync(string containerName, string id, string partitionKey);
+    Task<dynamic> UpsertItemAsync(string containerName, dynamic item);
 }
 
 public class CosmosDbService : ICosmosDbService
@@ -39,5 +41,26 @@ public class CosmosDbService : ICosmosDbService
         }
 
         return results;
+    }
+
+    public async Task<bool> ItemExistsAsync(string containerName, string id, string partitionKey)
+    {
+        try
+        {
+            var container = _cosmosClient.GetContainer(_databaseName, containerName);
+            await container.ReadItemAsync<dynamic>(id, new PartitionKey(partitionKey));
+            return true;
+        }
+        catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return false;
+        }
+    }
+
+    public async Task<dynamic> UpsertItemAsync(string containerName, dynamic item)
+    {
+        var container = _cosmosClient.GetContainer(_databaseName, containerName);
+        var response = await container.UpsertItemAsync(item);
+        return response.Resource;
     }
 }
