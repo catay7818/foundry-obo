@@ -7,8 +7,8 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' existi
   name: cosmosAccountName
 }
 
-// Cosmos DB Built-in Data Reader role definition ID
-var cosmosDataReaderRoleId = '00000000-0000-0000-0000-000000000001'
+// Cosmos DB Built-in Data Contributor role definition ID (read + write)
+var cosmosDataContributorRoleId = '00000000-0000-0000-0000-000000000002'
 
 // Custom role definition for container-specific access
 resource salesContainerRole 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2024-05-15' = {
@@ -77,12 +77,12 @@ resource financeContainerRole 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefi
   }
 }
 
-// Assign Function App managed identity full read access (for OBO flow)
+// Assign Function App managed identity full read/write access (for OBO flow and seeding)
 resource functionAppRoleAssignment 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2024-05-15' = {
   parent: cosmosAccount
-  name: guid(cosmosAccount.id, functionAppPrincipalId, cosmosDataReaderRoleId)
+  name: guid(cosmosAccount.id, functionAppPrincipalId, cosmosDataContributorRoleId)
   properties: {
-    roleDefinitionId: '${cosmosAccount.id}/sqlRoleDefinitions/${cosmosDataReaderRoleId}'
+    roleDefinitionId: '${cosmosAccount.id}/sqlRoleDefinitions/${cosmosDataContributorRoleId}'
     principalId: functionAppPrincipalId
     scope: cosmosAccount.id
   }
