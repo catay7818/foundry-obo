@@ -131,30 +131,45 @@ echo "Function App: $FUNCTION_APP"
 
 ### 3.1 Identify Test Users
 
-Get Object IDs for test users from Azure Portal:
+Get the Object ID for the user(s) you want to grant access:
 
 1. Go to **Entra ID** > **Users**
-2. Select each test user
+2. Select a user
 3. Copy their **Object ID**
 
 ### 3.2 Assign Cosmos DB Roles
 
-```bash
-# Make script executable
-chmod +x infra/scripts/assign-user-roles.sh
+Run the assignment script to grant a user access to a specific Cosmos DB container:
 
-# Run assignment script
-./infra/scripts/assign-user-roles.sh $RESOURCE_GROUP $COSMOS_ACCOUNT
+```bash
+# Assign a specific role
+./infra/scripts/assign-user-roles.sh \
+  --resource-group $RESOURCE_GROUP \
+  --cosmos-account $COSMOS_ACCOUNT \
+  --user-oid <USER_OBJECT_ID> \
+  --role sales   # sales, hr, finance, or all
+
+# Or omit the `--role` flag for interactive role selection:
+./infra/scripts/assign-user-roles.sh \
+  -g $RESOURCE_GROUP \
+  -c $COSMOS_ACCOUNT \
+  -u <USER_OBJECT_ID>
 ```
 
-The script will prompt for user Object IDs:
+Replace `<USER_OBJECT_ID>` with the actual Object ID from Step 3.1.
 
-- **User A**: Gets access to **Sales** container
-- **User B**: Gets access to **HR** container
-- **User C**: Gets access to **Finance** container
-- **Admin**: Gets access to **all** containers
+Available roles:
+
+- `sales` - Access to Sales container only
+- `hr` - Access to HR container only
+- `finance` - Access to Finance container only
+- `all` - Access to all containers
+
+Repeat the command for each user you want to grant access.
 
 ### 3.3 Update Function Code
+
+> TODO: should the function code really know about this?
 
 Edit `src/CosmosDataFunction/Functions/GetContainerData.cs`:
 

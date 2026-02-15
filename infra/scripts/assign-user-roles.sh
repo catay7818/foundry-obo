@@ -1,120 +1,188 @@
-#!/bin/bash
-# Script to assign Cosmos DB RBAC roles to specific users
+#!/usr/bin/env bash
+#
+# assign-user-roles.sh
+# Assigns Cosmos DB RBAC role to a specific user
 
-set -e
+set -euo pipefail
 
-# Configuration
-RESOURCE_GROUP="${1:-}"
-COSMOS_ACCOUNT_NAME="${2:-}"
-DATABASE_NAME="DemoDatabase"
+readonly DATABASE_NAME="DemoDatabase"
 
-if [ -z "$RESOURCE_GROUP" ] || [ -z "$COSMOS_ACCOUNT_NAME" ]; then
-    echo "Usage: $0 <resource-group> <cosmos-account-name>"
-    echo "Example: $0 foundry-dev-rg foundry-dev-cosmos-abc123"
-    exit 1
-fi
+usage() {
+  cat <<EOF
+Usage: ${0##*/} --resource-group <rg> --cosmos-account <name> --user-oid <oid> [--role <role>]
 
-echo "Configuring Cosmos DB RBAC for account: $COSMOS_ACCOUNT_NAME"
+Assigns a Cosmos DB RBAC role to a user.
 
-# Get Cosmos account resource ID
-COSMOS_ACCOUNT_ID=$(az cosmosdb show \
+Required Arguments:
+  --resource-group, -g    Resource group name
+  --cosmos-account, -c    Cosmos DB account name
+  --user-oid, -u          User Object ID from Entra ID
+
+Optional Arguments:
+  --role, -r              Role to assign: sales, hr, finance, all
+                          (interactive selection if not provided)
+  --help, -h              Show this help message
+
+Examples:
+  ${0##*/} -g foundry-dev-rg -c foundry-cosmos -u abc-123-def
+  ${0##*/} -g foundry-dev-rg -c foundry-cosmos -u abc-123-def -r sales
+EOF
+  exit 1
+}
+
+err() {
+  printf "ERROR: %s\n" "$1" >&2
+  exit 1
+}
+
+assign_role() {
+  local role_id="$1"
+  local role_name="$2"
+  local container="$3"
+  local scope="${COSMOS_ACCOUNT_ID}/dbs/${DATABASE_NAME}/colls/${container}"
+
+  printf "Assigning %s access to container %s...\n" "$role_name" "$container"
+  az cosmosdb sql role assignment create \
+    --account-name "$COSMOS_ACCOUNT_NAME" \
+    --resource-group "$RESOURCE_GROUP" \
+    --role-definition-id "$role_id" \
+    --principal-id "$USER_OID" \
+    --scope "$scope"
+}
+
+main() {
+  local RESOURCE_GROUP=""
+  local COSMOS_ACCOUNT_NAME=""
+  local USER_OID=""
+  local ROLE=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --resource-group|-g)
+        if [[ -z "${2:-}" || "$2" == --* ]]; then
+          err "--resource-group requires an argument"
+        fi
+        RESOURCE_GROUP="$2"
+        shift 2
+        ;;
+      --cosmos-account|-c)
+        if [[ -z "${2:-}" || "$2" == --* ]]; then
+          err "--cosmos-account requires an argument"
+        fi
+        COSMOS_ACCOUNT_NAME="$2"
+        shift 2
+        ;;
+      --user-oid|-u)
+        if [[ -z "${2:-}" || "$2" == --* ]]; then
+          err "--user-oid requires an argument"
+        fi
+        USER_OID="$2"
+        shift 2
+        ;;
+      --role|-r)
+        if [[ -z "${2:-}" || "$2" == --* ]]; then
+          err "--role requires an argument"
+        fi
+        ROLE="$2"
+        shift 2
+        ;;
+      --help|-h)
+        usage
+        ;;
+      *)
+        echo "Unknown option: $1" >&2
+        usage
+        ;;
+    esac
+  done
+
+  if [[ -z "$RESOURCE_GROUP" ]] || [[ -z "$COSMOS_ACCOUNT_NAME" ]] || [[ -z "$USER_OID" ]]; then
+    err "Missing required arguments"
+  fi
+
+  printf "Configuring Cosmos DB RBAC for account: %s\n" "$COSMOS_ACCOUNT_NAME"
+
+  local COSMOS_ACCOUNT_ID
+  COSMOS_ACCOUNT_ID=$(az cosmosdb show \
     --resource-group "$RESOURCE_GROUP" \
     --name "$COSMOS_ACCOUNT_NAME" \
-    --query id -o tsv)
+    --query id \
+    --output tsv)
 
-echo "Cosmos Account ID: $COSMOS_ACCOUNT_ID"
+  if [[ -z "$COSMOS_ACCOUNT_ID" ]]; then
+    err "Failed to retrieve Cosmos DB account ID"
+  fi
 
-# Get custom role definition IDs
-SALES_ROLE_ID=$(az cosmosdb sql role definition list \
+  printf "Retrieving role definitions...\n"
+
+  local SALES_ROLE_ID
+  local HR_ROLE_ID
+  local FINANCE_ROLE_ID
+
+  SALES_ROLE_ID=$(az cosmosdb sql role definition list \
     --account-name "$COSMOS_ACCOUNT_NAME" \
     --resource-group "$RESOURCE_GROUP" \
-    --query "[?roleName=='Sales Container Reader'].id" -o tsv)
+    --query "[?roleName=='Sales Container Reader'].id" \
+    --output tsv)
 
-HR_ROLE_ID=$(az cosmosdb sql role definition list \
+  HR_ROLE_ID=$(az cosmosdb sql role definition list \
     --account-name "$COSMOS_ACCOUNT_NAME" \
     --resource-group "$RESOURCE_GROUP" \
-    --query "[?roleName=='HR Container Reader'].id" -o tsv)
+    --query "[?roleName=='HR Container Reader'].id" \
+    --output tsv)
 
-FINANCE_ROLE_ID=$(az cosmosdb sql role definition list \
+  FINANCE_ROLE_ID=$(az cosmosdb sql role definition list \
     --account-name "$COSMOS_ACCOUNT_NAME" \
     --resource-group "$RESOURCE_GROUP" \
-    --query "[?roleName=='Finance Container Reader'].id" -o tsv)
+    --query "[?roleName=='Finance Container Reader'].id" \
+    --output tsv)
 
-echo "Role IDs:"
-echo "  Sales: $SALES_ROLE_ID"
-echo "  HR: $HR_ROLE_ID"
-echo "  Finance: $FINANCE_ROLE_ID"
+  if [[ -z "$SALES_ROLE_ID" ]] || [[ -z "$HR_ROLE_ID" ]] || [[ -z "$FINANCE_ROLE_ID" ]]; then
+    err "Failed to retrieve custom role definitions"
+  fi
 
-# Prompt for user principal IDs
-echo ""
-echo "Enter user Object IDs (OIDs) from Entra ID:"
-echo "You can find these in Azure Portal > Entra ID > Users > Select user > Object ID"
-echo ""
+  if [[ -z "$ROLE" ]]; then
+    printf "\nSelect role to assign:\n"
+    printf "  1) Sales\n"
+    printf "  2) HR\n"
+    printf "  3) Finance\n"
+    printf "  4) All\n"
+    read -rp "Enter choice [1-4]: " choice
 
-read -p "User A OID (Sales access): " USER_A_OID
-read -p "User B OID (HR access): " USER_B_OID
-read -p "User C OID (Finance access): " USER_C_OID
-read -p "Admin User OID (All access): " ADMIN_OID
+    case "$choice" in
+      1) ROLE="sales" ;;
+      2) ROLE="hr" ;;
+      3) ROLE="finance" ;;
+      4) ROLE="all" ;;
+      *) err "Invalid choice" ;;
+    esac
+  fi
 
-# Assign roles
-echo ""
-echo "Assigning roles..."
+  ROLE="$(echo "$ROLE" | tr '[:upper:]' '[:lower:]')"
 
-# User A - Sales only
-echo "Assigning Sales access to User A..."
-az cosmosdb sql role assignment create \
-    --account-name "$COSMOS_ACCOUNT_NAME" \
-    --resource-group "$RESOURCE_GROUP" \
-    --role-definition-id "$SALES_ROLE_ID" \
-    --principal-id "$USER_A_OID" \
-    --scope "${COSMOS_ACCOUNT_ID}/dbs/${DATABASE_NAME}/colls/Sales"
+  printf "\nAssigning role(s) to user: %s\n" "$USER_OID"
 
-# User B - HR only
-echo "Assigning HR access to User B..."
-az cosmosdb sql role assignment create \
-    --account-name "$COSMOS_ACCOUNT_NAME" \
-    --resource-group "$RESOURCE_GROUP" \
-    --role-definition-id "$HR_ROLE_ID" \
-    --principal-id "$USER_B_OID" \
-    --scope "${COSMOS_ACCOUNT_ID}/dbs/${DATABASE_NAME}/colls/HR"
+  case "$ROLE" in
+    sales)
+      assign_role "$SALES_ROLE_ID" "Sales" "Sales"
+      ;;
+    hr)
+      assign_role "$HR_ROLE_ID" "HR" "HR"
+      ;;
+    finance)
+      assign_role "$FINANCE_ROLE_ID" "Finance" "Finance"
+      ;;
+    all)
+      assign_role "$SALES_ROLE_ID" "Sales" "Sales"
+      assign_role "$HR_ROLE_ID" "HR" "HR"
+      assign_role "$FINANCE_ROLE_ID" "Finance" "Finance"
+      ;;
+    *)
+      err "Invalid role: $ROLE (must be sales, hr, finance, or all)"
+      ;;
+  esac
 
-# User C - Finance only
-echo "Assigning Finance access to User C..."
-az cosmosdb sql role assignment create \
-    --account-name "$COSMOS_ACCOUNT_NAME" \
-    --resource-group "$RESOURCE_GROUP" \
-    --role-definition-id "$FINANCE_ROLE_ID" \
-    --principal-id "$USER_C_OID" \
-    --scope "${COSMOS_ACCOUNT_ID}/dbs/${DATABASE_NAME}/colls/Finance"
+  printf "\n✅ RBAC configuration complete!\n"
+}
 
-# Admin - All containers
-echo "Assigning all access to Admin..."
-az cosmosdb sql role assignment create \
-    --account-name "$COSMOS_ACCOUNT_NAME" \
-    --resource-group "$RESOURCE_GROUP" \
-    --role-definition-id "$SALES_ROLE_ID" \
-    --principal-id "$ADMIN_OID" \
-    --scope "${COSMOS_ACCOUNT_ID}/dbs/${DATABASE_NAME}/colls/Sales"
-
-az cosmosdb sql role assignment create \
-    --account-name "$COSMOS_ACCOUNT_NAME" \
-    --resource-group "$RESOURCE_GROUP" \
-    --role-definition-id "$HR_ROLE_ID" \
-    --principal-id "$ADMIN_OID" \
-    --scope "${COSMOS_ACCOUNT_ID}/dbs/${DATABASE_NAME}/colls/HR"
-
-az cosmosdb sql role assignment create \
-    --account-name "$COSMOS_ACCOUNT_NAME" \
-    --resource-group "$RESOURCE_GROUP" \
-    --role-definition-id "$FINANCE_ROLE_ID" \
-    --principal-id "$ADMIN_OID" \
-    --scope "${COSMOS_ACCOUNT_ID}/dbs/${DATABASE_NAME}/colls/Finance"
-
-echo ""
-echo "✅ RBAC configuration complete!"
-echo ""
-echo "Update the Function App code with these user OIDs:"
-echo "  User A (Sales): $USER_A_OID"
-echo "  User B (HR): $USER_B_OID"
-echo "  User C (Finance): $USER_C_OID"
-echo "  Admin (All): $ADMIN_OID"
+main "$@"
