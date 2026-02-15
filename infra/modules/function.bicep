@@ -52,28 +52,50 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-// App Service Plan
+// App Service Plan (Flex Consumption for managed identity support)
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: '${projectName}-plan'
   location: location
   sku: {
-    name: 'Y1'
-    tier: 'Dynamic'
+    name: 'FC1'
+    tier: 'FlexConsumption'
   }
-  properties: {}
+  properties: {
+    reserved: true // Required for Flex Consumption
+  }
 }
 
 // Function App
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: '${projectName}-func-${uniqueSuffix}'
   location: location
-  kind: 'functionapp'
+  kind: 'functionapp,linux'
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
     serverFarmId: appServicePlan.id
     httpsOnly: true
+    reserved: true
+    functionAppConfig: {
+      deployment: {
+        storage: {
+          type: 'blobContainer'
+          value: '${storageAccount.properties.primaryEndpoints.blob}deploymentpackage'
+          authentication: {
+            type: 'SystemAssignedIdentity'
+          }
+        }
+      }
+      scaleAndConcurrency: {
+        maximumInstanceCount: 100
+        instanceMemoryMB: 2048
+      }
+      runtime: {
+        name: 'dotnet-isolated'
+        version: '8.0'
+      }
+    }
     siteConfig: {
       appSettings: [
         {
@@ -85,28 +107,20 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           value: 'managedidentity'
         }
         {
-          name: 'AzureWebJobsStorage__serviceUri'
+          name: 'AzureWebJobsStorage__blobServiceUri'
           value: 'https://${storageAccount.name}.blob.${az.environment().suffixes.storage}'
         }
         {
-          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING__accountName'
-          value: storageAccount.name
+          name: 'AzureWebJobsStorage__queueServiceUri'
+          value: 'https://${storageAccount.name}.queue.${az.environment().suffixes.storage}'
         }
         {
-          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING__credential'
-          value: 'managedidentity'
-        }
-        {
-          name: 'WEBSITE_CONTENTSHARE'
-          value: toLower('${projectName}-func')
+          name: 'AzureWebJobsStorage__tableServiceUri'
+          value: 'https://${storageAccount.name}.table.${az.environment().suffixes.storage}'
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
           value: '~4'
-        }
-        {
-          name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'dotnet-isolated'
         }
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -133,7 +147,6 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           value: foundryClientId
         }
       ]
-      netFrameworkVersion: 'v8.0'
       cors: {
         allowedOrigins: ['*']
       }
