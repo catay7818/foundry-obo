@@ -13,6 +13,8 @@ This guide walks through the complete deployment process for the Foundry Agent w
 
 ## Step 1: Entra ID App Registrations
 
+> TODO: update based on latest app registration settings
+
 ### 1.1 Create Foundry Agent App Registration
 
 ```bash
