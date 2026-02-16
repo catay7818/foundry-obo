@@ -75,10 +75,23 @@ chmod +x infra/scripts/assign-user-roles.sh
 
 ### 6. Deploy Function
 
+**Note**: This project uses Flex Consumption hosting which requires zip deployment instead of `func azure functionapp publish`.
+
 ```bash
+# Use the deployment script
+./infra/scripts/deploy-function.sh $FUNCTION_APP $RESOURCE_GROUP
+
+# Or deploy manually with Azure CLI
 cd src/CosmosDataFunction
-dotnet build --configuration Release
-func azure functionapp publish $FUNCTION_APP
+dotnet publish -c Release -o bin/publish
+cd bin/publish
+zip -r ../../deploy.zip . -x "*.log" "local.settings.json"
+cd ../..
+az functionapp deployment source config-zip \
+  --resource-group $RESOURCE_GROUP \
+  --name $FUNCTION_APP \
+  --src deploy.zip
+rm deploy.zip
 cd ../..
 ```
 

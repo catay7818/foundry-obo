@@ -6,10 +6,10 @@ This guide walks through the complete deployment process for the Foundry Agent w
 
 - **Azure Subscription**: Active subscription with permissions to create resources
 - **Azure CLI**: Version 2.50.0 or later ([Install](https://docs.microsoft.com/cli/azure/install-azure-cli))
-- **Azure Function Core Tools**: Version 4.7.0 or later ([Install](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=macos%2Cisolated-process%2Cnode-v4%2Cpython-v2%2Chttp-trigger%2Ccontainer-apps&pivots=programming-language-csharp#install-the-azure-functions-core-tools))
 - **.NET SDK**: Version 8.0 or later ([Install](https://dotnet.microsoft.com/download))
 - **Git**: For cloning the repository
-- **PowerShell** or **Bash**: For running deployment scripts
+- **Bash**: For running deployment scripts (macOS/Linux/WSL)
+- **zip**: Command-line zip utility (usually pre-installed on macOS/Linux)
 
 ## Step 1: Entra ID App Registrations
 
@@ -190,29 +190,64 @@ Replace placeholders with actual Object IDs from Step 3.1.
 
 ## Step 4: Deploy Azure Function
 
-### 4.1 Build Function App
+**Note**: This project uses Flex Consumption hosting which requires zip deployment instead of `func azure functionapp publish`.
+
+### 4.1 Deploy Using Script (Recommended)
+
+```bash
+# Make script executable
+chmod +x infra/scripts/deploy-function.sh
+
+# Deploy function app (auto-detects resource group)
+./infra/scripts/deploy-function.sh $FUNCTION_APP
+
+# Or specify resource group explicitly
+./infra/scripts/deploy-function.sh $FUNCTION_APP $RESOURCE_GROUP
+```
+
+The script will:
+
+- Build the function app with `dotnet publish`
+- Create a deployment zip package
+- Deploy to Azure using zip deployment
+- Clean up temporary files
+
+### 4.2 Deploy Manually (Alternative)
+
+If you prefer to deploy manually or troubleshoot:
 
 ```bash
 cd src/CosmosDataFunction
 
-# Restore dependencies
-dotnet restore
+# Build and publish
+dotnet publish -c Release -o bin/publish
 
-# Build project
-dotnet build --configuration Release
-```
+# Create deployment package
+cd bin/publish
+zip -r ../../deploy.zip . -x "*.log" "local.settings.json"
+cd ../..
 
-### 4.2 Publish to Azure
+# Deploy to Azure
+az functionapp deployment source config-zip \
+  --resource-group $RESOURCE_GROUP \
+  --name $FUNCTION_APP \
+  --src deploy.zip
 
-```bash
-# Publish function app
-func azure functionapp publish $FUNCTION_APP
+# Clean up
+rm deploy.zip
+cd ../..
 ```
 
 ### 4.3 Verify Deployment
 
 ```bash
-# Test health endpoint
+# List deployed functions
+az functionapp function list \
+  --name $FUNCTION_APP \
+  --resource-group $RESOURCE_GROUP \
+  --query "[].{Name:name, Trigger:type}" -o table
+
+# Get function app URL
 export FUNCTION_URL=$(az functionapp show \
   --resource-group $RESOURCE_GROUP \
   --name $FUNCTION_APP \
@@ -220,6 +255,12 @@ export FUNCTION_URL=$(az functionapp show \
 
 echo "Function URL: https://$FUNCTION_URL"
 ```
+
+Expected output should show three functions:
+
+- `GetContainerData` - Query Cosmos DB containers
+- `GetUserAccess` - Check user's container permissions
+- `SeedData` - Populate sample data
 
 ## Step 5: Seed Cosmos DB Data
 
@@ -337,6 +378,29 @@ curl -X POST "https://$FUNCTION_URL/api/containers/query" \
 ```
 
 ## Troubleshooting
+
+### Issue: Deployment fails with "LinuxFxVersion" error
+
+**Cause**: Using `func azure functionapp publish` with Flex Consumption apps
+
+**Solution**: Use the deployment script or manual zip deployment method as described in Step 4
+
+### Issue: Deployment fails with "WEBSITE_RUN_FROM_PACKAGE" error
+
+**Cause**: App setting incompatible with Flex Consumption hosting
+
+**Solution**:
+
+```bash
+# Remove incompatible app setting
+az functionapp config appsettings delete \
+  --name $FUNCTION_APP \
+  --resource-group $RESOURCE_GROUP \
+  --setting-names WEBSITE_RUN_FROM_PACKAGE
+
+# Redeploy using the deployment script
+./infra/scripts/deploy-function.sh $FUNCTION_APP $RESOURCE_GROUP
+```
 
 ### Issue: Function returns 401 Unauthorized
 
