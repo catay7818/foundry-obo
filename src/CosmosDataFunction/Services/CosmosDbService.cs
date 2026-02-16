@@ -3,12 +3,13 @@ using Azure.Identity;
 using Azure.Core;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using CosmosDataFunction.Models;
 
 namespace CosmosDataFunction.Services;
 
-internal class CosmosQueryResponse
+internal class CosmosQueryResponse<T>
 {
-    public List<object>? Documents { get; set; }
+    public List<T>? Documents { get; set; }
 }
 
 public interface ICosmosDbService
@@ -67,6 +68,44 @@ public class CosmosDbService : ICosmosDbService
         return new CosmosClient(_cosmosEndpoint, tokenCredential);
     }
 
+    /// <summary>
+    /// Maps container name to the appropriate data type for deserialization.
+    /// </summary>
+    private Type GetContainerDataType(string containerName)
+    {
+        return containerName.ToLowerInvariant() switch
+        {
+            "finance" => typeof(FinanceData),
+            "hr" => typeof(HrData),
+            "sales" => typeof(SalesData),
+            _ => typeof(object)
+        };
+    }
+
+    /// <summary>
+    /// Deserializes the query response content to the appropriate type based on container name.
+    /// </summary>
+    private List<object> DeserializeQueryResponse(string content, string containerName)
+    {
+        var dataType = GetContainerDataType(containerName);
+        var responseType = typeof(CosmosQueryResponse<>).MakeGenericType(dataType);
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var queryResponse = JsonSerializer.Deserialize(content, responseType, options);
+        if (queryResponse == null)
+        {
+            return new List<object>();
+        }
+
+        var documentsProperty = responseType.GetProperty("Documents");
+        var documents = documentsProperty?.GetValue(queryResponse) as IEnumerable<object>;
+
+        return documents?.ToList() ?? new List<object>();
+    }
+
     public async Task<List<object>> QueryContainerAsync(string containerName, string query, string? oboToken = null)
     {
         _logger.LogInformation("Querying container {Container} with query: {Query}", containerName, query);
@@ -90,14 +129,11 @@ public class CosmosDbService : ICosmosDbService
                 {
                     using var streamReader = new StreamReader(response.Content);
                     var content = await streamReader.ReadToEndAsync();
-                    var queryResponse = JsonSerializer.Deserialize<CosmosQueryResponse>(content);
+                    var documents = DeserializeQueryResponse(content, containerName);
 
-                    if (queryResponse?.Documents != null)
-                    {
-                        results.AddRange(queryResponse.Documents);
-                        _logger.LogDebug("Retrieved {Count} documents from page {Page}",
-                            queryResponse.Documents.Count, pageCount);
-                    }
+                    results.AddRange(documents);
+                    _logger.LogDebug("Retrieved {Count} documents from page {Page}",
+                        documents.Count, pageCount);
                 }
                 else
                 {
