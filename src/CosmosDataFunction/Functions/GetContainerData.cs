@@ -20,10 +20,10 @@ public class GetContainerData
     private readonly Dictionary<string, List<string>> _userContainerAccess = new()
     {
         // These will be configured during setup with actual user OIDs
-        { "user-a-oid", new List<string> { "Sales" } },
-        { "user-b-oid", new List<string> { "HR" } },
-        { "user-c-oid", new List<string> { "Finance" } },
-        { "admin-oid", new List<string> { "Sales", "HR", "Finance" } }
+        { "1538ecf9-aeba-4377-b9c1-b244e9767315", new List<string> { "Sales" } },
+        { "525ea289-2e77-4e60-8310-19cfdb39bd63", new List<string> { "HR" } },
+        { "cd1064a1-47c3-4dc0-9dd8-31022751f6a0", new List<string> { "Finance" } },
+        { "49813187-bd6e-42ec-ba53-f4135aa551b7", new List<string> { "Sales", "HR", "Finance" } }
     };
 
     public GetContainerData(

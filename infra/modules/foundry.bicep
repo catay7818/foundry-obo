@@ -58,15 +58,15 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
   }
 }
 
-// Foundry Project
-resource foundryProject 'Microsoft.CognitiveServices/accounts/projects@2025-06-01' = {
-  name: 'foundry-obo-project'
-  parent: foundry
-  location: location
-  identity: {
-    type: 'SystemAssigned'
-  }
-}
+// // Foundry Project
+// resource foundryProject 'Microsoft.CognitiveServices/accounts/projects@2025-06-01' = {
+//   name: 'foundry-obo-project'
+//   parent: foundry
+//   location: location
+//   identity: {
+//     type: 'SystemAssigned'
+//   }
+// }
 
 output foundryName string = foundry.name
 output foundryId string = foundry.id

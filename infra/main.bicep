@@ -90,6 +90,7 @@ module cosmosModule 'modules/cosmos.bicep' = {
 // Function App Module
 module functionModule 'modules/function.bicep' = {
   name: 'function-deployment'
+  dependsOn: [appInsights, storageAccount]
   params: {
     location: location
     projectName: projectName
@@ -116,6 +117,7 @@ module rbacModule 'modules/rbac.bicep' = {
 
 module foundry 'modules/foundry.bicep' = {
   name: 'foundry-deployment'
+  dependsOn: [appInsights, storageAccount, keyVault]
   params: {
     location: location
     projectName: projectName

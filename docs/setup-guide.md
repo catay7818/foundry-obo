@@ -190,8 +190,6 @@ Replace placeholders with actual Object IDs from Step 3.1.
 
 ## Step 4: Deploy Azure Function
 
-**Note**: This project uses Flex Consumption hosting which requires zip deployment instead of `func azure functionapp publish`.
-
 ### 4.1 Deploy Using Script (Recommended)
 
 ```bash
