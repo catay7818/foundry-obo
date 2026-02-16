@@ -87,8 +87,8 @@ public class GetContainerData
             // 4. Get OBO token for Cosmos DB access
             var oboToken = await _oboTokenProvider.GetOboTokenAsync(authHeader);
 
-            // 5. Query Cosmos DB
-            var data = await _cosmosDbService.QueryContainerAsync(request.ContainerName, request.Query);
+            // 5. Query Cosmos DB using the OBO token
+            var data = await _cosmosDbService.QueryContainerAsync(request.ContainerName, request.Query, oboToken);
 
             // 6. Return response
             var response = req.CreateResponse(HttpStatusCode.OK);

@@ -69,6 +69,8 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   }
 }
 
+// TODO: FunctionClientSecret value needs to be loaded from keyvault
+
 // Function App
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: '${projectName}-func-${uniqueSuffix}'
