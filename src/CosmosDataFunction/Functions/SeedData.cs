@@ -20,6 +20,14 @@ public class SeedData
         { "sales.json", "Sales" }
     };
 
+    // Mapping of container names to partition key property names
+    private readonly Dictionary<string, string> _containerPartitionKeyMapping = new()
+    {
+        { "Finance", "fiscalYear" },
+        { "HR", "department" },
+        { "Sales", "region" }
+    };
+
     public SeedData(
         ILogger<SeedData> logger,
         ICosmosDbService cosmosDbService)
@@ -110,8 +118,32 @@ public class SeedData
                                 continue;
                             }
 
+                            // Get the partition key property name for this container
+                            if (!_containerPartitionKeyMapping.TryGetValue(containerName, out var partitionKeyProperty))
+                            {
+                                _logger.LogError($"No partition key mapping found for container: {containerName}");
+                                result.SkippedCount++;
+                                continue;
+                            }
+
+                            // Extract the partition key value from the record
+                            if (!record.TryGetProperty(partitionKeyProperty, out var partitionKeyElement))
+                            {
+                                _logger.LogWarning($"Record missing '{partitionKeyProperty}' property (partition key), skipping");
+                                result.SkippedCount++;
+                                continue;
+                            }
+
+                            var partitionKey = partitionKeyElement.GetString();
+                            if (string.IsNullOrEmpty(partitionKey))
+                            {
+                                _logger.LogWarning($"Record has empty '{partitionKeyProperty}' property (partition key), skipping");
+                                result.SkippedCount++;
+                                continue;
+                            }
+
                             // Check if the item already exists
-                            var exists = await _cosmosDbService.ItemExistsAsync(containerName, id, id);
+                            var exists = await _cosmosDbService.ItemExistsAsync(containerName, id, partitionKey);
 
                             if (exists)
                             {
@@ -121,14 +153,14 @@ public class SeedData
                             else
                             {
                                 // Upsert the item
-                                await _cosmosDbService.UpsertItemAsync(containerName, record);
+                                await _cosmosDbService.UpsertItemAsync(containerName, record, partitionKey);
                                 _logger.LogInformation($"Successfully added item with id '{id}' to {containerName}");
                                 result.AddedCount++;
                             }
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(ex, $"Error processing record in {fileName}");
+                            _logger.LogError(ex, $"Error processing record in {fileName}: {ex.Message}");
                             result.SkippedCount++;
                         }
                     }

@@ -1,5 +1,6 @@
 using Microsoft.Azure.Cosmos;
 using Azure.Identity;
+using System.Text.Json;
 
 namespace CosmosDataFunction.Services;
 
@@ -7,7 +8,7 @@ public interface ICosmosDbService
 {
     Task<List<dynamic>> QueryContainerAsync(string containerName, string query);
     Task<bool> ItemExistsAsync(string containerName, string id, string partitionKey);
-    Task<dynamic> UpsertItemAsync(string containerName, dynamic item);
+    Task<dynamic> UpsertItemAsync(string containerName, dynamic item, string partitionKey);
 }
 
 public class CosmosDbService : ICosmosDbService
@@ -57,10 +58,29 @@ public class CosmosDbService : ICosmosDbService
         }
     }
 
-    public async Task<dynamic> UpsertItemAsync(string containerName, dynamic item)
+    public async Task<dynamic> UpsertItemAsync(string containerName, dynamic item, string partitionKey)
     {
         var container = _cosmosClient.GetContainer(_databaseName, containerName);
-        var response = await container.UpsertItemAsync(item);
-        return response.Resource;
+
+        // Convert JsonElement to stream for proper Cosmos DB serialization
+        if (item is JsonElement jsonElement)
+        {
+            using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonElement.GetRawText()));
+            var response = await container.UpsertItemStreamAsync(stream, new PartitionKey(partitionKey));
+
+            if (!response.IsSuccessStatusCode)
+            {
+                using var reader = new StreamReader(response.Content);
+                var errorContent = await reader.ReadToEndAsync();
+                throw new CosmosException($"Upsert failed: {errorContent}", response.StatusCode, 0, string.Empty, 0);
+            }
+
+            using var responseStream = response.Content;
+            var result = await JsonSerializer.DeserializeAsync<object>(responseStream);
+            return result ?? throw new InvalidOperationException("Deserialization returned null");
+        }
+
+        var regularResponse = await container.UpsertItemAsync(item, new PartitionKey(partitionKey));
+        return regularResponse.Resource;
     }
 }
