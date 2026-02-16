@@ -11,7 +11,7 @@
             "description": "Azure Function App endpoint",
             "variables": {
                 "functionAppName": {
-                    "default": "foundry-dev-func",
+                    "default": "obo-func-65eelhoyd65xa",
                     "description": "Function App name from deployment"
                 }
             }

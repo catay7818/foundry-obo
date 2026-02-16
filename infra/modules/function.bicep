@@ -25,31 +25,20 @@ param functionClientId string
 @description('Client ID of the Foundry agent app registration')
 param foundryClientId string
 
+@description('Name of the existing Application Insights resource')
+param appInsightsName string
+
+@description('Name of the existing Storage Account Resource')
+param storageAccountName string
+
 // Application Insights
-resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: '${projectName}-appinsights'
-  location: location
-  kind: 'web'
-  properties: {
-    Application_Type: 'web'
-    publicNetworkAccessForIngestion: 'Enabled'
-    publicNetworkAccessForQuery: 'Enabled'
-  }
+resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
+  name: appInsightsName
 }
 
-// Storage Account for Function App
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
-  name: '${replace(projectName, '-', '')}st${uniqueSuffix}'
-  location: location
-  sku: {
-    name: 'Standard_LRS'
-  }
-  kind: 'StorageV2'
-  properties: {
-    supportsHttpsTrafficOnly: true
-    minimumTlsVersion: 'TLS1_2'
-    allowSharedKeyAccess: false // Disable key-based access
-  }
+// Storage Account
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
+  name: storageAccountName
 }
 
 // Blob Services for Storage Account

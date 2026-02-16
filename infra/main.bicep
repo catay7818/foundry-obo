@@ -18,6 +18,64 @@ param foundryClientId string
 param functionClientId string
 
 var uniqueSuffix = uniqueString(resourceGroup().id)
+var appInsightsName = '${projectName}-appinsights'
+var storageAccountName = '${replace(projectName, '-', '')}st${uniqueSuffix}'
+var keyVaultName = '${projectName}-kv-${uniqueSuffix}'
+
+// Application Insights
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: appInsightsName
+  location: location
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    publicNetworkAccessForIngestion: 'Enabled'
+    publicNetworkAccessForQuery: 'Enabled'
+  }
+}
+
+// Storage Account for Function App
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'StorageV2'
+  properties: {
+    supportsHttpsTrafficOnly: true
+    minimumTlsVersion: 'TLS1_2'
+    allowSharedKeyAccess: false // Disable key-based access
+    encryption: {
+      services: {
+        blob: {
+          enabled: true
+        }
+        file: {
+          enabled: true
+        }
+      }
+      keySource: 'Microsoft.Storage'
+    }
+  }
+}
+
+// Key Vault for AI Foundry workspace
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
+  name: keyVaultName
+  location: location
+  properties: {
+    sku: {
+      name: 'standard'
+      family: 'A'
+    }
+    tenantId: tenant().tenantId
+    enableSoftDelete: true
+    softDeleteRetentionInDays: 7
+    enableRbacAuthorization: true
+    publicNetworkAccess: 'Enabled'
+  }
+}
 
 // Cosmos DB Module
 module cosmosModule 'modules/cosmos.bicep' = {
@@ -41,6 +99,8 @@ module functionModule 'modules/function.bicep' = {
     tenantId: tenantId
     functionClientId: functionClientId
     foundryClientId: foundryClientId
+    appInsightsName: appInsightsName
+    storageAccountName: storageAccountName
   }
 }
 
@@ -51,6 +111,18 @@ module rbacModule 'modules/rbac.bicep' = {
     cosmosAccountName: cosmosModule.outputs.cosmosAccountName
     databaseName: cosmosModule.outputs.databaseName
     functionAppPrincipalId: functionModule.outputs.functionAppPrincipalId
+  }
+}
+
+module foundry 'modules/foundry.bicep' = {
+  name: 'foundry-deployment'
+  params: {
+    location: location
+    projectName: projectName
+    uniqueSuffix: uniqueSuffix
+    appInsightsName: appInsightsName
+    keyVaultName: keyVaultName
+    storageAccountName: storageAccountName
   }
 }
 
