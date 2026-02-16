@@ -11,9 +11,6 @@ param projectName string
 @description('Tenant ID for Entra ID')
 param tenantId string = tenant().tenantId
 
-@description('Client ID of the Foundry agent app registration')
-param foundryClientId string
-
 @description('Client ID of the Azure Function app registration')
 param functionClientId string
 
@@ -99,7 +96,6 @@ module functionModule 'modules/function.bicep' = {
     databaseName: cosmosModule.outputs.databaseName
     tenantId: tenantId
     functionClientId: functionClientId
-    foundryClientId: foundryClientId
     appInsightsName: appInsightsName
     storageAccountName: storageAccountName
     keyVaultName: keyVaultName

@@ -22,9 +22,6 @@ param tenantId string
 @description('Client ID of the Azure Function app registration')
 param functionClientId string
 
-@description('Client ID of the Foundry agent app registration')
-param foundryClientId string
-
 @description('Name of the existing Application Insights resource')
 param appInsightsName string
 
@@ -155,10 +152,6 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         {
           name: 'FunctionClientId'
           value: functionClientId
-        }
-        {
-          name: 'FoundryClientId'
-          value: foundryClientId
         }
         {
           name: 'FunctionClientSecret'

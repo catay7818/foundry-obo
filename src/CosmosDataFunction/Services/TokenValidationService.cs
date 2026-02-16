@@ -15,8 +15,6 @@ public class TokenValidationService(ILogger<TokenValidationService> logger) : IT
     private readonly ILogger<TokenValidationService> _logger = logger;
     private readonly string _tenantId = Environment.GetEnvironmentVariable("TenantId")
         ?? throw new InvalidOperationException("TenantId not configured");
-    private readonly string _foundryClientId = Environment.GetEnvironmentVariable("FoundryClientId")
-        ?? throw new InvalidOperationException("FoundryClientId not configured");
     private readonly string _functionClientId = Environment.GetEnvironmentVariable("FunctionClientId")
         ?? throw new InvalidOperationException("FunctionClientId not configured");
 
