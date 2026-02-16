@@ -90,7 +90,7 @@ module cosmosModule 'modules/cosmos.bicep' = {
 // Function App Module
 module functionModule 'modules/function.bicep' = {
   name: 'function-deployment'
-  dependsOn: [appInsights, storageAccount]
+  dependsOn: [appInsights, storageAccount, keyVault]
   params: {
     location: location
     projectName: projectName
@@ -102,6 +102,7 @@ module functionModule 'modules/function.bicep' = {
     foundryClientId: foundryClientId
     appInsightsName: appInsightsName
     storageAccountName: storageAccountName
+    keyVaultName: keyVaultName
   }
 }
 

@@ -31,6 +31,9 @@ param appInsightsName string
 @description('Name of the existing Storage Account Resource')
 param storageAccountName string
 
+@description('The name of the Key Vault resource')
+param keyVaultName string
+
 // Application Insights
 resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
   name: appInsightsName
@@ -39,6 +42,11 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
 // Storage Account
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
   name: storageAccountName
+}
+
+// Key Vault
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+  name: keyVaultName
 }
 
 // Blob Services for Storage Account
@@ -152,6 +160,10 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           name: 'FoundryClientId'
           value: foundryClientId
         }
+        {
+          name: 'FunctionClientSecret'
+          value: '@Microsoft.KeyVault(VaultName=${keyVaultName};SecretName=FunctionClientSecret)'
+        }
       ]
       cors: {
         allowedOrigins: ['*']
@@ -208,6 +220,20 @@ resource storageFileDataPrivilegedContributorRole 'Microsoft.Authorization/roleA
       'Microsoft.Authorization/roleDefinitions',
       '69566ab7-960f-475b-8e7c-b3118f30c6bd'
     ) // Storage File Data Privileged Contributor
+    principalId: functionApp.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Key Vault RBAC - Grant Function App access to read secrets
+resource keyVaultSecretsUserRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(keyVault.id, functionApp.id, '4633458b-17de-408a-b874-0445c86b69e6')
+  scope: keyVault
+  properties: {
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '4633458b-17de-408a-b874-0445c86b69e6'
+    ) // Key Vault Secrets User
     principalId: functionApp.identity.principalId
     principalType: 'ServicePrincipal'
   }
