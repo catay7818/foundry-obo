@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.Json;
 using CosmosDataFunction.Models;
 using CosmosDataFunction.Services;
+using Microsoft.Azure.Cosmos;
 
 namespace CosmosDataFunction.Functions;
 
@@ -80,9 +81,8 @@ public class GetContainerData
             //     return CreateErrorResponse(req, HttpStatusCode.Forbidden,
             //         $"Access denied to container '{request.ContainerName}'");
             // }
-
-            _logger.LogInformation("User {UserId} authorized for container {Container}",
-                userId, request.ContainerName);
+            // _logger.LogInformation("User {UserId} authorized for container {Container}",
+            //     userId, request.ContainerName);
 
             // 4. Get OBO token for Cosmos DB access
             var oboToken = await _oboTokenProvider.GetOboTokenAsync(authHeader);
@@ -101,10 +101,29 @@ public class GetContainerData
 
             return response;
         }
+        catch (CosmosException cosmosEx)
+        {
+            _logger.LogError(cosmosEx, "Cosmos DB error: {StatusCode} - {Message}",
+                cosmosEx.StatusCode, cosmosEx.Message);
+
+            var statusCode = cosmosEx.StatusCode switch
+            {
+                System.Net.HttpStatusCode.NotFound => HttpStatusCode.NotFound,
+                System.Net.HttpStatusCode.Forbidden => HttpStatusCode.Forbidden,
+                System.Net.HttpStatusCode.Unauthorized => HttpStatusCode.Unauthorized,
+                System.Net.HttpStatusCode.BadRequest => HttpStatusCode.BadRequest,
+                System.Net.HttpStatusCode.TooManyRequests => HttpStatusCode.TooManyRequests,
+                _ => HttpStatusCode.InternalServerError
+            };
+
+            return CreateErrorResponse(req, statusCode,
+                $"Cosmos DB error: {cosmosEx.Message}");
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing request");
-            return CreateErrorResponse(req, HttpStatusCode.InternalServerError, "Internal server error");
+            _logger.LogError(ex, "Error processing request: {Message}", ex.Message);
+            return CreateErrorResponse(req, HttpStatusCode.InternalServerError,
+                $"Error processing request: {ex.Message}");
         }
     }
 
@@ -143,10 +162,29 @@ public class GetContainerData
 
             return response;
         }
+        catch (CosmosException cosmosEx)
+        {
+            _logger.LogError(cosmosEx, "Cosmos DB error: {StatusCode} - {Message}",
+                cosmosEx.StatusCode, cosmosEx.Message);
+
+            var statusCode = cosmosEx.StatusCode switch
+            {
+                System.Net.HttpStatusCode.NotFound => HttpStatusCode.NotFound,
+                System.Net.HttpStatusCode.Forbidden => HttpStatusCode.Forbidden,
+                System.Net.HttpStatusCode.Unauthorized => HttpStatusCode.Unauthorized,
+                System.Net.HttpStatusCode.BadRequest => HttpStatusCode.BadRequest,
+                System.Net.HttpStatusCode.TooManyRequests => HttpStatusCode.TooManyRequests,
+                _ => HttpStatusCode.InternalServerError
+            };
+
+            return CreateErrorResponse(req, statusCode,
+                $"Cosmos DB error: {cosmosEx.Message}");
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing request");
-            return CreateErrorResponse(req, HttpStatusCode.InternalServerError, "Internal server error");
+            _logger.LogError(ex, "Error processing request: {Message}", ex.Message);
+            return CreateErrorResponse(req, HttpStatusCode.InternalServerError,
+                $"Error processing request: {ex.Message}");
         }
     }
 

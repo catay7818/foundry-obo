@@ -13,7 +13,7 @@ public class OboTokenProvider : IOboTokenProvider
     private readonly string _functionClientId;
     private readonly string _functionClientSecret;
     private readonly IConfidentialClientApplication _confidentialClient;
-    private const string CosmosScope = "https://cosmos.azure.com/.default";
+    private const string CosmosScope = "https://cosmos.azure.com/user_impersonation";
 
     public OboTokenProvider()
     {
