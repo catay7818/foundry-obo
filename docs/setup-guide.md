@@ -264,25 +264,10 @@ Expected output should show three functions:
 
 ## Step 5: Seed Cosmos DB Data
 
-### Option A: Azure Portal (Recommended for Demo)
+In the Azure Portal, navigate to the SeedData function and execute it.
+This will upload sample records into the cosmos containers.
 
-1. Navigate to **Azure Portal** > **Cosmos DB Account**
-2. Open **Data Explorer**
-3. For each container:
-   - Select container (Sales, HR, Finance)
-   - Click **New Item**
-   - Paste content from corresponding file in `data/sample-data/`
-   - Repeat for each item in the JSON array
-
-### Option B: Using Script (Preparation)
-
-```bash
-# Make script executable
-chmod +x data/scripts/seed-cosmos.sh
-
-# Run seed script (provides instructions)
-./data/scripts/seed-cosmos.sh $RESOURCE_GROUP $COSMOS_ACCOUNT
-```
+![screenshot of seeding data](./images/seed-data.png)
 
 ## Step 6: Configure Foundry Agent
 
