@@ -1,0 +1,4 @@
+name: Local
+variables:
+  - name: functionHost
+    value: http://localhost:7071

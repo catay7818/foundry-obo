@@ -1,0 +1,22 @@
+info:
+  name: Query Finance Data
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{functionHost}}/api/containers/query"
+  body:
+    type: json
+    data: |-
+      {
+        "ContainerName": "Finance",
+        "Query": "SELECT * FROM c"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

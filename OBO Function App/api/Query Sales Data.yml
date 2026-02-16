@@ -1,0 +1,22 @@
+info:
+  name: Query Sales Data
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{functionHost}}/api/containers/query"
+  body:
+    type: json
+    data: |-
+      {
+        "ContainerName": "Sales",
+        "Query": "SELECT * FROM c"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

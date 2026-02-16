@@ -1,0 +1,22 @@
+info:
+  name: Query HR Data
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{functionHost}}/api/containers/query"
+  body:
+    type: json
+    data: |-
+      {
+        "ContainerName": "HR",
+        "Query": "SELECT * FROM c"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

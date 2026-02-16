@@ -1,0 +1,4 @@
+name: Remote
+variables:
+  - name: functionHost
+    value: https://obo-func-auwz6k237u2d6.azurewebsites.net
