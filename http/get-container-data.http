@@ -1,7 +1,0 @@
-POST http://localhost:7071/api/containers/query
-Authorization: Bearer {{$aadV2Token tenantId:16b3c013-d300-468d-ac64-7eda0820b6d3 clientId:66ed14e4-9609-4009-9238-bfa75ee3a8ce}}
-
-{
-    "ContainerName": "HR",
-    "Query": "SELECT * FROM c"
-}
