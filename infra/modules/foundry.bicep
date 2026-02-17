@@ -18,6 +18,9 @@ param storageAccountName string
 @description('Name of the existing Application Insights resource')
 param appInsightsName string
 
+@description('Name of the Azure Container Registry')
+param acrName string
+
 @allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
 param sku object = {
@@ -56,6 +59,15 @@ resource account 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
     disableLocalAuth: disableLocalAuth
   }
 }
+
+// resource capabilityHost 'Microsoft.CognitiveServices/accounts/capabilityHosts@2025-06-01' = {
+//   parent: account
+//   name: 'accountcaphost'
+//   properties: {
+//     capabilityHostKind: 'Agents'
+//     enablePublicHostingEnvironment: true
+//   }
+// }
 
 resource aiServiceConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
   name: 'aoai-connection'
@@ -101,6 +113,11 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' existing 
   name: storageAccountName
 }
 
+// Azure Container Registry
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
+  name: acrName
+}
+
 // Creates the Azure Foundry connection to your Azure Storage resource
 resource storageAccountConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
   name: 'storage-account-connection'
@@ -128,6 +145,18 @@ resource aiProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-pre
   properties: {
     description: aiProjectName
     displayName: aiProjectName
+  }
+}
+
+// Grant AcrPull role to AI Project identity
+var acrPullRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
+resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(containerRegistry.id, aiProject.id, acrPullRoleDefinitionId)
+  scope: containerRegistry
+  properties: {
+    roleDefinitionId: acrPullRoleDefinitionId
+    principalId: aiProject.identity.principalId
+    principalType: 'ServicePrincipal'
   }
 }
 

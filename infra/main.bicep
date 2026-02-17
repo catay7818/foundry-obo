@@ -74,6 +74,16 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   }
 }
 
+// Azure Container Registry Module
+module acrModule 'modules/acr.bicep' = {
+  name: 'acr-deployment'
+  params: {
+    location: location
+    projectName: projectName
+    uniqueSuffix: uniqueSuffix
+  }
+}
+
 // Cosmos DB Module
 module cosmosModule 'modules/cosmos.bicep' = {
   name: 'cosmos-deployment'
@@ -122,9 +132,12 @@ module foundry 'modules/foundry.bicep' = {
     appInsightsName: appInsightsName
     keyVaultName: keyVaultName
     storageAccountName: storageAccountName
+    acrName: acrModule.outputs.acrName
   }
 }
 
+output acrName string = acrModule.outputs.acrName
+output acrLoginServer string = acrModule.outputs.acrLoginServer
 output cosmosAccountName string = cosmosModule.outputs.cosmosAccountName
 output cosmosEndpoint string = cosmosModule.outputs.cosmosEndpoint
 output functionAppName string = functionModule.outputs.functionAppName
