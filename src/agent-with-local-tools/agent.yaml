@@ -1,10 +1,9 @@
 # Unique identifier/name for this agent
-name: seattle-hotel-agent
+name: foundry-obo-agent
 # Brief description of what this agent does
 description: >
-  A travel assistant agent that helps users find hotels in Seattle.
-  Demonstrates local Python tool execution - a key advantage of code-based
-  hosted agents over prompt agents.
+  A simple agent intended to demonstrate accessing data on-behalf-of the current user.
+  Invokes a tool that performs OBO token exchange to access an Azure Function.
 metadata:
   # Categorization tags for organizing and discovering agents
   authors:
@@ -13,10 +12,9 @@ metadata:
     - Azure AI AgentServer
     - Microsoft Agent Framework
     - Local Tools
-    - Travel Assistant
-    - Hotel Search
+    - OAuth OBO
 template:
-  name: seattle-hotel-agent
+  name: foundry-obo-agent
   kind: hosted
   protocols:
     - protocol: responses

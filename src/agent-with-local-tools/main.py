@@ -1,13 +1,10 @@
 """
-Seattle Hotel Agent - A simple agent with a tool to find hotels in Seattle.
-Uses Microsoft Agent Framework with Azure AI Foundry.
-Ready for deployment to Foundry Hosted Agent service.
+Foundry OBO Agent - A simple agent intended to demonstrate accessing data on-behalf-of the current user.
+Invokes a tool that performs OBO token exchange to access an Azure Function.
 """
 
 import asyncio
 import os
-from typing import Annotated
-from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -26,91 +23,11 @@ MODEL_DEPLOYMENT_NAME = os.getenv(
 )  # Your model deployment name e.g., "gpt-4.1-mini"
 
 
-# Simulated hotel data for Seattle
-SEATTLE_HOTELS = [
-    {
-        "name": "Contoso Suites",
-        "price_per_night": 189,
-        "rating": 4.5,
-        "location": "Downtown",
-    },
-    {
-        "name": "Fabrikam Residences",
-        "price_per_night": 159,
-        "rating": 4.2,
-        "location": "Pike Place Market",
-    },
-    {
-        "name": "Alpine Ski House",
-        "price_per_night": 249,
-        "rating": 4.7,
-        "location": "Seattle Center",
-    },
-    {
-        "name": "Margie's Travel Lodge",
-        "price_per_night": 219,
-        "rating": 4.4,
-        "location": "Waterfront",
-    },
-    {
-        "name": "Northwind Inn",
-        "price_per_night": 139,
-        "rating": 4.0,
-        "location": "Capitol Hill",
-    },
-    {
-        "name": "Relecloud Hotel",
-        "price_per_night": 99,
-        "rating": 3.8,
-        "location": "University District",
-    },
-]
-
-
-def get_available_hotels(
-    check_in_date: Annotated[str, "Check-in date in YYYY-MM-DD format"],
-    check_out_date: Annotated[str, "Check-out date in YYYY-MM-DD format"],
-    max_price: Annotated[int, "Maximum price per night in USD (optional)"] = 500,
-) -> str:
+def query_data_on_behalf_of_user(container: str, query: str | None = None):
     """
-    Get available hotels in Seattle for the specified dates.
-    This simulates a call to a fake hotel availability API.
+    This tool queries data from a container (Finance, HR, or Sales) by invoking an Azure Function on behalf of the current user.
     """
-    try:
-        # Parse dates
-        check_in = datetime.strptime(check_in_date, "%Y-%m-%d")
-        check_out = datetime.strptime(check_out_date, "%Y-%m-%d")
-
-        # Validate dates
-        if check_out <= check_in:
-            return "Error: Check-out date must be after check-in date."
-
-        nights = (check_out - check_in).days
-
-        # Filter hotels by price
-        available_hotels = [
-            hotel for hotel in SEATTLE_HOTELS if hotel["price_per_night"] <= max_price
-        ]
-
-        if not available_hotels:
-            return (
-                f"No hotels found in Seattle within your budget of ${max_price}/night."
-            )
-
-        # Build response
-        result = f"Available hotels in Seattle from {check_in_date} to {check_out_date} ({nights} nights):\n\n"
-
-        for hotel in available_hotels:
-            total_cost = hotel["price_per_night"] * nights
-            result += f"**{hotel['name']}**\n"
-            result += f"   Location: {hotel['location']}\n"
-            result += f"   Rating: {hotel['rating']}/5\n"
-            result += f"   ${hotel['price_per_night']}/night (Total: ${total_cost})\n\n"
-
-        return result
-
-    except ValueError as e:
-        return f"Error parsing dates. Please use YYYY-MM-DD format. Details: {str(e)}"
+    return "MOCK DATA"
 
 
 async def main():
@@ -124,22 +41,19 @@ async def main():
         ) as client,
     ):
         agent = client.create_agent(
-            name="SeattleHotelAgent",
-            instructions="""You are a helpful travel assistant specializing in finding hotels in Seattle, Washington.
+            name="FoundryOBOAgent",
+            instructions="""You are an assistant that demonstrates accessing data on behalf of the current user.
+The user will ask questions about Finance, HR, and Sales data, but may or may not have access to those data sets.
 
-When a user asks about hotels in Seattle:
-1. Ask for their check-in and check-out dates if not provided
-2. Ask about their budget preferences if not mentioned
-3. Use the get_available_hotels tool to find available options
-4. Present the results in a friendly, informative way
-5. Offer to help with additional questions about the hotels or Seattle
+The CosmosDataAPI tool should be used to retrieve data from the Finance, HR, or Sales containers.
+This tool calls an Azure Function that implements the OAuth On-Behalf-Of flow.
+This allows Cosmos itself to authorize user data access at the container level.
 
-Be conversational and helpful. If users ask about things outside of Seattle hotels,
-politely let them know you specialize in Seattle hotel recommendations.""",
-            tools=[get_available_hotels],
+Include API calls and responses in output for debugging purposes.""",
+            tools=[query_data_on_behalf_of_user],
         )
 
-        print("Seattle Hotel Agent Server running on http://localhost:8088")
+        print("Foundry OBO Agent Server running on http://localhost:8088")
         server = from_agent_framework(agent)
         await server.run_async()
 

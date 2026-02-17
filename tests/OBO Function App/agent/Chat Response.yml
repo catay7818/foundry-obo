@@ -10,7 +10,7 @@ http:
     type: json
     data: |-
       {
-        "input": "I need a hotel in Seattle from 2025-03-15 to 2025-03-18, budget under $200 per night",
+        "input": "show me sales data",
         "stream": false
       }
   auth: inherit
