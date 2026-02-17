@@ -60,14 +60,6 @@ resource account 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
   }
 }
 
-// resource capabilityHost 'Microsoft.CognitiveServices/accounts/capabilityHosts@2025-06-01' = {
-//   parent: account
-//   name: 'accountcaphost'
-//   properties: {
-//     capabilityHostKind: 'Agents'
-//     enablePublicHostingEnvironment: true
-//   }
-// }
 
 resource aiServiceConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
   name: 'aoai-connection'
@@ -134,7 +126,7 @@ resource storageAccountConnection 'Microsoft.CognitiveServices/accounts/connecti
   }
 }
 
-var aiProjectName = 'foundry-obo-proj'
+var aiProjectName = 'foundry-obo-proj-${uniqueSuffix}'
 resource aiProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
   parent: account
   name: aiProjectName

@@ -16,6 +16,7 @@ AGENT_NAME = os.getenv("AGENT_NAME", "foundry-obo-hosted-agent")
 PROJECT_ENDPOINT = os.getenv("PROJECT_ENDPOINT")
 MODEL_DEPLOYMENT_NAME = os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-4.1-mini")
 AGENT_IMAGE = os.getenv("AGENT_IMAGE")
+FUNCTION_APP_URL = os.getenv("FUNCTION_APP_URL")
 
 # Initialize the client
 client = AIProjectClient(
@@ -36,6 +37,7 @@ agent = client.agents.create_version(
         environment_variables={
             "PROJECT_ENDPOINT": PROJECT_ENDPOINT,
             "MODEL_DEPLOYMENT_NAME": MODEL_DEPLOYMENT_NAME,
+            "FUNCTION_APP_URL": FUNCTION_APP_URL,
         },
     ),
 )

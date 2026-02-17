@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Foundry OBO Agent",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/agent-with-local-tools/main.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src/agent-with-local-tools",
+            "envFile": "${workspaceFolder}/src/agent-with-local-tools/.env",
+            "justMyCode": true,
+            "python": "${workspaceFolder}/.venv/bin/python"
+        }
+    ]
+}
