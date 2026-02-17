@@ -14,6 +14,7 @@
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.2" />
         <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.42.0" />
         <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.5.1" />
+        <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="7.5.1" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
     </ItemGroup>
     <ItemGroup>

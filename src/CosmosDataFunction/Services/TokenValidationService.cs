@@ -1,6 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CosmosDataFunction.Services;
@@ -31,6 +33,16 @@ public class TokenValidationService(ILogger<TokenValidationService> logger) : IT
 
             var handler = new JsonWebTokenHandler();
             var expectedAudience = "api://" + _functionClientId;
+
+            // Configure metadata endpoint for signing key retrieval
+            var metadataEndpoint = $"https://login.microsoftonline.com/{_tenantId}/v2.0/.well-known/openid-configuration";
+            var configManager = new ConfigurationManager<OpenIdConnectConfiguration>(
+                metadataEndpoint,
+                new OpenIdConnectConfigurationRetriever(),
+                new HttpDocumentRetriever());
+
+            var openIdConfig = await configManager.GetConfigurationAsync();
+
             var validationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -43,28 +55,20 @@ public class TokenValidationService(ILogger<TokenValidationService> logger) : IT
                 ValidAudience = expectedAudience,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKeyResolver = (token, securityToken, kid, validationParameters) =>
-                {
-                    // In production, use proper key resolver from OIDC discovery
-                    // For demo purposes, we'll do basic validation
-                    return new List<SecurityKey>();
-                }
+                IssuerSigningKeys = openIdConfig.SigningKeys
             };
 
-            // For demo purposes, decode without full validation
-            // In production, uncomment the validation below
-            var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            // Perform actual token validation
+            var result = await handler.ValidateTokenAsync(token, validationParameters);
 
-            // Verify audience
-            if (!jwtToken.Audiences.Contains(expectedAudience))
+            if (!result.IsValid)
             {
-                _logger.LogWarning("Token validation failed: Invalid audience. Expected {ExpectedAudience}, got {ActualAudiences}",
-                    expectedAudience, string.Join(", ", jwtToken.Audiences));
+                _logger.LogWarning("Token validation failed: {Exception}", result.Exception?.Message);
                 return null;
             }
 
             // Extract user ID (OID claim)
-            var oid = jwtToken.Claims.FirstOrDefault(c => c.Type == "oid")?.Value;
+            var oid = result.ClaimsIdentity.FindFirst("oid")?.Value;
 
             if (string.IsNullOrEmpty(oid))
             {
