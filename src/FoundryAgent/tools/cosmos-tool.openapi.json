@@ -7,14 +7,8 @@
     },
     "servers": [
         {
-            "url": "https://{functionAppName}.azurewebsites.net/api",
-            "description": "Azure Function App endpoint",
-            "variables": {
-                "functionAppName": {
-                    "default": "obo-func-65eelhoyd65xa",
-                    "description": "Function App name from deployment"
-                }
-            }
+            "url": "https://obo-func-auwz6k237u2d6.azurewebsites.net/api",
+            "description": "Azure Function App endpoint"
         }
     ],
     "security": [
