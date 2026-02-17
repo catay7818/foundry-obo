@@ -2,3 +2,5 @@ name: Local
 variables:
   - name: functionHost
     value: http://localhost:7071
+  - name: agentHost
+    value: http://localhost:8088

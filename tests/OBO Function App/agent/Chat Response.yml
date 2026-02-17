@@ -1,0 +1,22 @@
+info:
+  name: Chat Response
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{agentHost}}/responses"
+  body:
+    type: json
+    data: |-
+      {
+        "input": "I need a hotel in Seattle from 2025-03-15 to 2025-03-18, budget under $200 per night",
+        "stream": false
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
