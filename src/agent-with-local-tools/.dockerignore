@@ -64,3 +64,6 @@ docs/
 *.md
 !README.md
 LICENSE
+
+# Testing code
+main_fastapi.py
