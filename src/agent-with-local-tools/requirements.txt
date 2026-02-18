@@ -3,6 +3,11 @@ python-dotenv
 azure-identity
 httpx
 
+# OBO token validation and acquisition
+msal>=1.24.0
+PyJWT[crypto]>=2.8.0
+requests>=2.31.0
+
 # Azure Monitor / OpenTelemetry
 azure-monitor-opentelemetry-exporter>=1.0.0b46
 opentelemetry-sdk>=1.39.0

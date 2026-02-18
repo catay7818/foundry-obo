@@ -63,6 +63,23 @@
                 "showReuseMessage": true,
                 "clear": false
             }
+        },
+        {
+            "label": "Run FastAPI Server",
+            "type": "shell",
+            "command": "${command:python.interpreterPath} -m uvicorn main_fastapi:app --reload",
+            "options": {
+                "cwd": "${workspaceFolder}/src/agent-with-local-tools"
+            },
+            "isBackground": true,
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
         }
     ]
 }
