@@ -5,7 +5,7 @@
             "name": "Debug Foundry OBO Agent",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/src/agent-with-local-tools/main.py",
+            "program": "${workspaceFolder}/src/agent-with-local-tools/main_agentserver.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src/agent-with-local-tools",
             "envFile": "${workspaceFolder}/src/agent-with-local-tools/.env",

@@ -52,9 +52,9 @@ async def query_data(
         HTTPException: If the query fails or authorization header is missing
     """
     result = await query_data_on_behalf_of_user(
-        bearer_token=authorization,
         container=request.container,
         query=request.query,
+        bearer_token=authorization,
     )
 
     # Check if the result indicates an error

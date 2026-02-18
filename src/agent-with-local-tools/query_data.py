@@ -10,20 +10,32 @@ from obo import validate_and_get_obo_token
 # Azure Function configuration
 FUNCTION_APP_URL = os.getenv("FUNCTION_APP_URL")
 OBO_SCOPE = os.getenv("OBO_SCOPE")
+# Global auth header for default authorization
+_global_auth_header: str | None = None
+
+
+def set_auth_header(auth_header: str) -> None:
+    """Set the global authorization header to use as default.
+
+    Args:
+        auth_header: The Authorization header value (e.g., 'Bearer <token>')
+    """
+    global _global_auth_header
+    _global_auth_header = auth_header
 
 
 async def query_data_on_behalf_of_user(
-    bearer_token: str,
     container: str,
     query: str | None = None,
+    bearer_token: str = None,
 ):
     """
     This tool queries data from a container (Finance, HR, or Sales) by invoking an Azure Function on behalf of the current user.
 
     Args:
-        bearer_token: The bearer token to use to retrieve an OBO token for the user.
         container: The name of the container to query (Finance, HR, or Sales)
         query: Optional SQL query to filter data. If not provided, returns all data.
+        bearer_token: (Optional) The bearer token to use to retrieve an OBO token for the user.
 
     Returns:
         JSON data from the container or error message
@@ -41,6 +53,15 @@ async def query_data_on_behalf_of_user(
         return f"Error: Invalid container '{container}'. Must be one of: {', '.join(valid_containers)}"
 
     print(f"[QUERY] Container '{container}' validated successfully")
+
+    # Use global auth header if no bearer_token provided
+    if bearer_token is None:
+        bearer_token = _global_auth_header
+        print("[QUERY] Using global auth header as bearer_token")
+
+    if bearer_token is None:
+        print("[QUERY] Error: No bearer token available")
+        return {"success": False, "error": "No authentication token provided"}
 
     print(f"[QUERY] Acquiring OBO token with scope: {OBO_SCOPE}")
     oid, resource_token = validate_and_get_obo_token(bearer_token, scopes=[OBO_SCOPE])
