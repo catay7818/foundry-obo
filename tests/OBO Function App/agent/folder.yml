@@ -1,7 +1,28 @@
 info:
   name: agent
   type: folder
-  seq: 3
+  seq: 1
 
 request:
-  auth: inherit
+  auth:
+    type: oauth2
+    flow: authorization_code
+    authorizationUrl: https://login.microsoftonline.com/5113c164-f41a-4f8a-aaae-96d81e693b93/oauth2/v2.0/authorize
+    accessTokenUrl: https://login.microsoftonline.com/5113c164-f41a-4f8a-aaae-96d81e693b93/oauth2/v2.0/token
+    credentials:
+      clientId: 95c8825e-d2d0-43c0-ae5b-787c47fc2df2
+      placement: basic_auth_header
+    additionalParameters:
+      accessTokenRequest:
+        - name: origin
+          placement: header
+          value: https://oauth.usebruno.com
+    scope: api://6bc00924-e342-4714-b94e-33a9544c1d92/user_impersonation
+    pkce: {}
+    tokenConfig:
+      id: credentials
+      placement:
+        header: Bearer
+    settings:
+      autoFetchToken: true
+      autoRefreshToken: false
