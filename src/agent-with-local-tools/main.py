@@ -13,7 +13,7 @@ from agent_framework.azure import AzureAIAgentClient
 from azure.ai.agentserver.agentframework import from_agent_framework
 from azure.identity.aio import DefaultAzureCredential
 
-from tools import query_data_on_behalf_of_user
+from query_data import query_data_on_behalf_of_user
 
 # Configure these for your Foundry project
 # Read the explicit variables present in the .env file
