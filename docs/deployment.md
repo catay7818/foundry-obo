@@ -1,5 +1,8 @@
 # Deployment Guide
 
+> [!WARNING]
+> This documentation is a work in progress and may be incomplete.
+
 Quick reference for deploying the Foundry OBO Cosmos DB demo.
 
 ## Prerequisites Checklist

@@ -1,5 +1,8 @@
 # Architecture Overview
 
+> [!WARNING]
+> This documentation is a work in progress and may be incomplete.
+
 ## System Components
 
 This demonstration showcases a secure, multi-tier architecture for container-level access control in Cosmos DB using On-Behalf-Of (OBO) authentication with Microsoft Foundry agents.

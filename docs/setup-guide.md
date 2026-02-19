@@ -1,5 +1,8 @@
 # Setup Guide
 
+> [!WARNING]
+> This documentation is a work in progress and may be incomplete.
+
 This guide walks through the complete deployment process for the Foundry Agent with OBO Cosmos DB Access demo.
 
 ## Prerequisites
