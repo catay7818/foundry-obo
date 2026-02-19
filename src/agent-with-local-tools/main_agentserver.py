@@ -89,9 +89,7 @@ The user will ask questions about Finance, HR, and Sales data, but may or may no
 
 The CosmosDataAPI tool should be used to retrieve data from the Finance, HR, or Sales containers.
 This tool calls an Azure Function that implements the OAuth On-Behalf-Of flow.
-This allows Cosmos itself to authorize user data access at the container level.
-
-Include API calls and responses in output for debugging purposes.""",
+This allows Cosmos itself to authorize user data access at the container level.""",
             tools=[query_data_on_behalf_of_user],
         )
 
