@@ -51,13 +51,13 @@ public class GetContainerData
             var authHeader = req.Headers.GetValues("Authorization").FirstOrDefault();
             if (string.IsNullOrEmpty(authHeader))
             {
-                return CreateErrorResponse(req, HttpStatusCode.Unauthorized, "Missing authorization header");
+                return await CreateErrorResponse(req, HttpStatusCode.Unauthorized, "Missing authorization header");
             }
 
             var userId = await _tokenValidation.ValidateTokenAsync(authHeader);
             if (string.IsNullOrEmpty(userId))
             {
-                return CreateErrorResponse(req, HttpStatusCode.Unauthorized, "Invalid token");
+                return await CreateErrorResponse(req, HttpStatusCode.Unauthorized, "Invalid token");
             }
 
             _logger.LogInformation("Token validated for user: {UserId}", userId);
@@ -69,7 +69,7 @@ public class GetContainerData
 
             if (request == null || string.IsNullOrEmpty(request.ContainerName))
             {
-                return CreateErrorResponse(req, HttpStatusCode.BadRequest, "Invalid request body");
+                return await CreateErrorResponse(req, HttpStatusCode.BadRequest, "Invalid request body");
             }
 
             // // 3. Check user access to requested container
@@ -106,23 +106,23 @@ public class GetContainerData
             _logger.LogError(cosmosEx, "Cosmos DB error: {StatusCode} - {Message}",
                 cosmosEx.StatusCode, cosmosEx.Message);
 
-            var statusCode = cosmosEx.StatusCode switch
-            {
-                System.Net.HttpStatusCode.NotFound => HttpStatusCode.NotFound,
-                System.Net.HttpStatusCode.Forbidden => HttpStatusCode.Forbidden,
-                System.Net.HttpStatusCode.Unauthorized => HttpStatusCode.Unauthorized,
-                System.Net.HttpStatusCode.BadRequest => HttpStatusCode.BadRequest,
-                System.Net.HttpStatusCode.TooManyRequests => HttpStatusCode.TooManyRequests,
-                _ => HttpStatusCode.InternalServerError
-            };
+            // var statusCode = cosmosEx.StatusCode switch
+            // {
+            //     System.Net.HttpStatusCode.NotFound => HttpStatusCode.NotFound,
+            //     System.Net.HttpStatusCode.Forbidden => HttpStatusCode.Forbidden,
+            //     System.Net.HttpStatusCode.Unauthorized => HttpStatusCode.Unauthorized,
+            //     System.Net.HttpStatusCode.BadRequest => HttpStatusCode.BadRequest,
+            //     System.Net.HttpStatusCode.TooManyRequests => HttpStatusCode.TooManyRequests,
+            //     _ => HttpStatusCode.InternalServerError
+            // };
 
-            return CreateErrorResponse(req, statusCode,
+            return await CreateErrorResponse(req, cosmosEx.StatusCode,
                 $"Cosmos DB error: {cosmosEx.Message}");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing request: {Message}", ex.Message);
-            return CreateErrorResponse(req, HttpStatusCode.InternalServerError,
+            return await CreateErrorResponse(req, HttpStatusCode.InternalServerError,
                 $"Error processing request: {ex.Message}");
         }
     }
@@ -139,13 +139,13 @@ public class GetContainerData
             var authHeader = req.Headers.GetValues("Authorization").FirstOrDefault();
             if (string.IsNullOrEmpty(authHeader))
             {
-                return CreateErrorResponse(req, HttpStatusCode.Unauthorized, "Missing authorization header");
+                return await CreateErrorResponse(req, HttpStatusCode.Unauthorized, "Missing authorization header");
             }
 
             var userId = await _tokenValidation.ValidateTokenAsync(authHeader);
             if (string.IsNullOrEmpty(userId))
             {
-                return CreateErrorResponse(req, HttpStatusCode.Unauthorized, "Invalid token");
+                return await CreateErrorResponse(req, HttpStatusCode.Unauthorized, "Invalid token");
             }
 
             // Get user's allowed containers
@@ -167,35 +167,37 @@ public class GetContainerData
             _logger.LogError(cosmosEx, "Cosmos DB error: {StatusCode} - {Message}",
                 cosmosEx.StatusCode, cosmosEx.Message);
 
-            var statusCode = cosmosEx.StatusCode switch
-            {
-                System.Net.HttpStatusCode.NotFound => HttpStatusCode.NotFound,
-                System.Net.HttpStatusCode.Forbidden => HttpStatusCode.Forbidden,
-                System.Net.HttpStatusCode.Unauthorized => HttpStatusCode.Unauthorized,
-                System.Net.HttpStatusCode.BadRequest => HttpStatusCode.BadRequest,
-                System.Net.HttpStatusCode.TooManyRequests => HttpStatusCode.TooManyRequests,
-                _ => HttpStatusCode.InternalServerError
-            };
+            // var statusCode = cosmosEx.StatusCode switch
+            // {
+            //     System.Net.HttpStatusCode.NotFound => HttpStatusCode.NotFound,
+            //     System.Net.HttpStatusCode.Forbidden => HttpStatusCode.Forbidden,
+            //     System.Net.HttpStatusCode.Unauthorized => HttpStatusCode.Unauthorized,
+            //     System.Net.HttpStatusCode.BadRequest => HttpStatusCode.BadRequest,
+            //     System.Net.HttpStatusCode.TooManyRequests => HttpStatusCode.TooManyRequests,
+            //     _ => HttpStatusCode.InternalServerError
+            // };
 
-            return CreateErrorResponse(req, statusCode,
+            _logger.LogInformation("cosmosEx.StatusCode = {StatusCode}", cosmosEx.StatusCode);
+            return await CreateErrorResponse(req, cosmosEx.StatusCode,
                 $"Cosmos DB error: {cosmosEx.Message}");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing request: {Message}", ex.Message);
-            return CreateErrorResponse(req, HttpStatusCode.InternalServerError,
+            return await CreateErrorResponse(req, HttpStatusCode.InternalServerError,
                 $"Error processing request: {ex.Message}");
         }
     }
 
-    private static HttpResponseData CreateErrorResponse(HttpRequestData req, HttpStatusCode statusCode, string message)
+    private static async Task<HttpResponseData> CreateErrorResponse(HttpRequestData req, HttpStatusCode statusCode, string message)
     {
         var response = req.CreateResponse(statusCode);
-        response.WriteAsJsonAsync(new ContainerQueryResponse
+        await response.WriteAsJsonAsync(new ContainerQueryResponse
         {
             Success = false,
             ErrorMessage = message
         });
+        response.StatusCode = statusCode;
         return response;
     }
 }

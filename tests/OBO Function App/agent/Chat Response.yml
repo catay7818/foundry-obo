@@ -10,7 +10,7 @@ http:
     type: json
     data: |-
       {
-        "input": "show me sales data",
+        "input": "show me finance data",
         "stream": false
       }
   auth: inherit

@@ -50,7 +50,7 @@
         {
             "label": "Run Foundry OBO Agent",
             "type": "shell",
-            "command": "${command:python.interpreterPath} main.py",
+            "command": "${command:python.interpreterPath} main_agentserver.py",
             "options": {
                 "cwd": "${workspaceFolder}/src/agent-with-local-tools"
             },

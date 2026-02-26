@@ -13,6 +13,10 @@ from typing import Optional
 import jwt
 import requests
 from msal import ConfidentialClientApplication
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+
 
 logger = logging.getLogger(__name__)
 
