@@ -15,6 +15,13 @@ A demo (in the form of pdf slides) can be found here: [OBO-Demo-Slides.pdf](./do
 
 OBO token validation & exchange has been implemented manually in both the Data API and Data Agent layers.
 
+> [!NOTE]
+> These JWT token validation & OBO exchanges are for demonstration purposes only.
+> A proper implementation should include:
+>
+> - Token caching (and refresh) to address the significant latency of these operations.
+> - Back-propagation of authorization failures up the call chain.
+
 ### Data API
 
 Implemented as a dotnet Azure Function
