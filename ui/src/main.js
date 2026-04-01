@@ -1,7 +1,8 @@
-import { PublicClientApplication } from "@azure/msal-browser";
-import { AGENT_SERVER_URL, loginRequest, msalConfig, tokenRequest } from "./authConfig.js";
-
-const msalInstance = new PublicClientApplication(msalConfig);
+import {
+    AGENT_SERVER_URL,
+    loginRequest,
+    msalInstance,
+} from "./authConfig.js";
 
 // DOM elements
 const loginScreen = document.getElementById("login-screen");
@@ -14,34 +15,33 @@ const chatInput = document.getElementById("chat-input");
 const chatMessages = document.getElementById("chat-messages");
 const sendBtn = document.getElementById("send-btn");
 
-let currentAccount = null;
+// Handle redirect response after login
+await msalInstance.handleRedirectPromise();
 
-// Initialize MSAL and check for existing session
-async function initialize() {
-    await msalInstance.initialize();
+function getAccount() {
+    const accounts = msalInstance.getAllAccounts();
+    return accounts.length > 0 ? accounts[0] : null;
+}
+
+async function getAccessToken() {
+    const account = getAccount();
+    if (!account) throw new Error("No account found");
     try {
-        const response = await msalInstance.handleRedirectPromise();
-        if (response) {
-            currentAccount = response.account;
-        } else {
-            const accounts = msalInstance.getAllAccounts();
-            if (accounts.length > 0) {
-                currentAccount = accounts[0];
-            }
-        }
-
-        if (currentAccount) {
-            showChat();
-        }
-    } catch (error) {
-        console.error("MSAL initialization error:", error);
+        const response = await msalInstance.acquireTokenSilent({
+            ...loginRequest,
+            account,
+        });
+        return response.accessToken;
+    } catch {
+        const response = await msalInstance.acquireTokenPopup(loginRequest);
+        return response.accessToken;
     }
 }
 
-function showChat() {
+function showChat(account) {
     loginScreen.classList.add("hidden");
     chatScreen.classList.remove("hidden");
-    userName.textContent = currentAccount.name || currentAccount.username;
+    userName.textContent = account.name || account.username;
     chatInput.focus();
 }
 
@@ -50,35 +50,26 @@ function showLogin() {
     loginScreen.classList.remove("hidden");
 }
 
-async function login() {
+// Check if already signed in
+const account = getAccount();
+if (account) {
+    showChat(account);
+} else {
+    showLogin();
+}
+
+loginBtn.addEventListener("click", async () => {
     try {
         const response = await msalInstance.loginPopup(loginRequest);
-        currentAccount = response.account;
-        showChat();
-    } catch (error) {
-        console.error("Login failed:", error);
-    }
-}
+      showChat(response.account);
+  } catch (error) {
+      console.error("Login failed:", error);
+  }
+});
 
-function logout() {
-    msalInstance.logoutPopup({ account: currentAccount }).then(() => {
-        currentAccount = null;
-        chatMessages.innerHTML = "";
-        showLogin();
-    });
-}
-
-async function getAccessToken() {
-    const request = { ...tokenRequest, account: currentAccount };
-    try {
-        const response = await msalInstance.acquireTokenSilent(request);
-        return response.accessToken;
-    } catch (error) {
-        // Fallback to interactive if silent fails
-        const response = await msalInstance.acquireTokenPopup(request);
-        return response.accessToken;
-    }
-}
+logoutBtn.addEventListener("click", () => {
+    msalInstance.logoutPopup();
+});
 
 function appendMessage(role, text) {
     const msg = document.createElement("div");
@@ -145,10 +136,6 @@ async function sendMessage(input) {
     }
 }
 
-// Event listeners
-loginBtn.addEventListener("click", login);
-logoutBtn.addEventListener("click", logout);
-
 chatForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const input = chatInput.value.trim();
@@ -157,4 +144,4 @@ chatForm.addEventListener("submit", (e) => {
     sendMessage(input);
 });
 
-initialize();
+chatInput.focus();
