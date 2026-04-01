@@ -14,6 +14,7 @@ from azure.ai.agentserver.core.models.projects import (
 )
 from azure.ai.agentserver.core.server.base import AgentRunContextMiddleware
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
+from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 from azure.identity.aio import DefaultAzureCredential
 
@@ -70,6 +71,12 @@ class OBOCustomAgent(FoundryCBAgent):
         # Clear existing middlewares and re-add with custom one
         self.app.user_middleware = []
         self.app.add_middleware(HttpRequestAgentRunContextMiddleware, agent=self)
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["http://localhost:5173"],
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
 
 async def main():
