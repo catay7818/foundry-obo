@@ -7,6 +7,12 @@ This repository demonstrates how a Microsoft Foundry agent enforces container-le
 
 ![high level obo flow diagram](./docs/obo-flow.drawio.png)
 
+## Example
+
+In the example below, the user only has access to finance data, but not HR data. The agent responds accordingly.
+
+![example obo chat](./example-obo-chat.png)
+
 ## OBO Demo Slides
 
 A demo (in the form of pdf slides) can be found here: [OBO-Demo-Slides.pdf](./docs/OBO-Demo-Slides.pdf).
