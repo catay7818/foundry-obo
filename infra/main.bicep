@@ -14,6 +14,22 @@ param tenantId string = tenant().tenantId
 @description('Client ID of the Azure Function app registration')
 param functionClientId string
 
+@description('Foundry project endpoint URL for the agent')
+param agentProjectEndpoint string
+
+@description('Model deployment name for the agent')
+param agentModelDeploymentName string = 'gpt-4.1'
+
+@description('Client ID of the agent app registration')
+param agentClientId string
+
+@description('OBO scope for the upstream API')
+param agentOboScope string
+
+@description('Client secret for the agent app registration')
+@secure()
+param agentClientSecret string
+
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var appInsightsName = '${projectName}-appinsights'
 var storageAccountName = '${replace(projectName, '-', '')}st${uniqueSuffix}'
@@ -136,6 +152,25 @@ module foundry 'modules/foundry.bicep' = {
   }
 }
 
+// ACI Module (Foundry OBO Agent)
+module aciModule 'modules/aci.bicep' = {
+  name: 'aci-deployment'
+  params: {
+    location: location
+    projectName: projectName
+    uniqueSuffix: uniqueSuffix
+    acrLoginServer: acrModule.outputs.acrLoginServer
+    acrName: acrModule.outputs.acrName
+    projectEndpoint: agentProjectEndpoint
+    modelDeploymentName: agentModelDeploymentName
+    functionAppUrl: functionModule.outputs.functionAppUrl
+    tenantId: tenantId
+    clientId: agentClientId
+    clientSecret: agentClientSecret
+    oboScope: agentOboScope
+  }
+}
+
 output acrName string = acrModule.outputs.acrName
 output acrLoginServer string = acrModule.outputs.acrLoginServer
 output cosmosAccountName string = cosmosModule.outputs.cosmosAccountName
@@ -143,3 +178,4 @@ output cosmosEndpoint string = cosmosModule.outputs.cosmosEndpoint
 output functionAppName string = functionModule.outputs.functionAppName
 output functionAppUrl string = functionModule.outputs.functionAppUrl
 output functionAppPrincipalId string = functionModule.outputs.functionAppPrincipalId
+output agentContainerFqdn string = aciModule.outputs.containerFqdn
