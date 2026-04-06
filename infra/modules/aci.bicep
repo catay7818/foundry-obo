@@ -38,6 +38,13 @@ param clientSecret string
 @description('OBO scope for the upstream API')
 param oboScope string
 
+@description('Log Analytics workspace customer ID')
+param logAnalyticsWorkspaceId string
+
+@description('Log Analytics workspace primary key')
+@secure()
+param logAnalyticsWorkspaceKey string
+
 var containerGroupName = '${projectName}-aci-${uniqueSuffix}'
 var containerName = '${projectName}-agent'
 var imageName = '${acrLoginServer}/foundry-obo-agent:latest'
@@ -146,6 +153,13 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
           protocol: 'TCP'
         }
       ]
+    }
+    diagnostics: {
+      logAnalytics: {
+        workspaceId: logAnalyticsWorkspaceId
+        workspaceKey: logAnalyticsWorkspaceKey
+        logType: 'ContainerInsights'
+      }
     }
   }
 }

@@ -34,6 +34,19 @@ var uniqueSuffix = uniqueString(resourceGroup().id)
 var appInsightsName = '${projectName}-appinsights'
 var storageAccountName = '${replace(projectName, '-', '')}st${uniqueSuffix}'
 var keyVaultName = '${projectName}-kv-${uniqueSuffix}'
+var logAnalyticsWorkspaceName = '${projectName}-law-${uniqueSuffix}'
+
+// Log Analytics Workspace
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
+  name: logAnalyticsWorkspaceName
+  location: location
+  properties: {
+    sku: {
+      name: 'PerGB2018'
+    }
+    retentionInDays: 30
+  }
+}
 
 // Application Insights
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
@@ -168,6 +181,19 @@ module aciModule 'modules/aci.bicep' = {
     clientId: agentClientId
     clientSecret: agentClientSecret
     oboScope: agentOboScope
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.properties.customerId
+    logAnalyticsWorkspaceKey: logAnalyticsWorkspace.listKeys().primarySharedKey
+  }
+}
+
+// Static Web App Module (UI)
+module staticWebAppModule 'modules/staticwebapp.bicep' = {
+  name: 'staticwebapp-deployment'
+  params: {
+    location: 'westus2'
+    projectName: projectName
+    uniqueSuffix: uniqueSuffix
+    agentUrl: 'https://obo-agent-auwz6k237u2d6.westus.azurecontainer.io' // 'https://${aciModule.outputs.containerFqdn}'
   }
 }
 
@@ -179,3 +205,5 @@ output functionAppName string = functionModule.outputs.functionAppName
 output functionAppUrl string = functionModule.outputs.functionAppUrl
 output functionAppPrincipalId string = functionModule.outputs.functionAppPrincipalId
 output agentContainerFqdn string = aciModule.outputs.containerFqdn
+output staticWebAppName string = staticWebAppModule.outputs.staticWebAppName
+output staticWebAppUrl string = staticWebAppModule.outputs.staticWebAppUrl
