@@ -1,6 +1,7 @@
 import { PublicClientApplication } from "@azure/msal-browser";
 
 export const AGENT_SERVER_URL = import.meta.env.VITE_AGENT_SERVER_URL ?? "http://localhost:8088";
+// export const AGENT_SERVER_URL = "https://obo-agent-auwz6k237u2d6.blackrock-40cfb740.westus.azurecontainerapps.io";
 
 const msalConfig = {
     auth: {

@@ -45,8 +45,10 @@ param logAnalyticsWorkspaceId string
 @secure()
 param logAnalyticsWorkspaceKey string
 
-@description('URL of the Static Web App used as the allowed CORS origin')
-param staticWebAppUrl string = ''
+var allowedCorsOrigins = [
+  'https://wonderful-hill-0e770e11e.6.azurestaticapps.net'
+  'http://localhost:5173'
+]
 
 var containerAppEnvName = '${projectName}-cae-${uniqueSuffix}'
 var containerAppName = '${projectName}-agent-${uniqueSuffix}'
@@ -117,7 +119,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
         targetPort: 8088
         transport: 'auto'
         corsPolicy: {
-          allowedOrigins: empty(staticWebAppUrl) ? [] : [staticWebAppUrl]
+          allowedOrigins: allowedCorsOrigins
           allowedHeaders: ['*']
           allowedMethods: ['*']
           allowCredentials: true

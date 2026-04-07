@@ -84,10 +84,23 @@ function appendMessage(role, text) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
+let typingIndicator = null;
+
 function setLoading(loading) {
     sendBtn.disabled = loading;
     chatInput.disabled = loading;
-    sendBtn.textContent = loading ? "..." : "Send";
+
+    if (loading) {
+        typingIndicator = document.createElement("div");
+        typingIndicator.className = "message assistant";
+        typingIndicator.innerHTML =
+            '<div class="bubble typing-indicator"><span></span><span></span><span></span></div>';
+        chatMessages.appendChild(typingIndicator);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    } else if (typingIndicator) {
+        typingIndicator.remove();
+        typingIndicator = null;
+    }
 }
 
 async function sendMessage(input) {
