@@ -45,13 +45,13 @@ param logAnalyticsWorkspaceId string
 @secure()
 param logAnalyticsWorkspaceKey string
 
-var containerGroupName = '${projectName}-aci-${uniqueSuffix}'
-var containerName = '${projectName}-agent'
+var containerAppEnvName = '${projectName}-cae-${uniqueSuffix}'
+var containerAppName = '${projectName}-agent-${uniqueSuffix}'
 var imageName = '${acrLoginServer}/foundry-obo-agent:latest'
 
 // User-assigned managed identity for ACR image pull
 resource containerIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
-  name: '${projectName}-aci-identity-${uniqueSuffix}'
+  name: '${projectName}-aca-identity-${uniqueSuffix}'
   location: location
 }
 
@@ -74,9 +74,24 @@ resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-
   }
 }
 
-// Azure Container Instance
-resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
-  name: containerGroupName
+// Container Apps Environment
+resource containerAppEnv 'Microsoft.App/managedEnvironments@2024-03-01' = {
+  name: containerAppEnvName
+  location: location
+  properties: {
+    appLogsConfiguration: {
+      destination: 'log-analytics'
+      logAnalyticsConfiguration: {
+        customerId: logAnalyticsWorkspaceId
+        sharedKey: logAnalyticsWorkspaceKey
+      }
+    }
+  }
+}
+
+// Container App
+resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
+  name: containerAppName
   location: location
   dependsOn: [acrPullRoleAssignment]
   identity: {
@@ -86,32 +101,36 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
     }
   }
   properties: {
-    osType: 'Linux'
-    restartPolicy: 'Always'
-    imageRegistryCredentials: [
-      {
-        server: acrLoginServer
-        identity: containerIdentity.id
+    environmentId: containerAppEnv.id
+    configuration: {
+      registries: [
+        {
+          server: acrLoginServer
+          identity: containerIdentity.id
+        }
+      ]
+      ingress: {
+        external: true
+        targetPort: 8088
+        transport: 'auto'
       }
-    ]
-    containers: [
-      {
-        name: containerName
-        properties: {
+      secrets: [
+        {
+          name: 'client-secret'
+          value: clientSecret
+        }
+      ]
+    }
+    template: {
+      containers: [
+        {
+          name: '${projectName}-agent'
           image: imageName
           resources: {
-            requests: {
-              cpu: 1
-              memoryInGB: 2
-            }
+            cpu: 1
+            memory: '2Gi'
           }
-          ports: [
-            {
-              port: 8088
-              protocol: 'TCP'
-            }
-          ]
-          environmentVariables: [
+          env: [
             {
               name: 'PROJECT_ENDPOINT'
               value: projectEndpoint
@@ -134,7 +153,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
             }
             {
               name: 'CLIENT_SECRET'
-              secureValue: clientSecret
+              secretRef: 'client-secret'
             }
             {
               name: 'OBO_SCOPE'
@@ -142,27 +161,14 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
             }
           ]
         }
-      }
-    ]
-    ipAddress: {
-      type: 'Public'
-      dnsNameLabel: '${projectName}-agent-${uniqueSuffix}'
-      ports: [
-        {
-          port: 8088
-          protocol: 'TCP'
-        }
       ]
-    }
-    diagnostics: {
-      logAnalytics: {
-        workspaceId: logAnalyticsWorkspaceId
-        workspaceKey: logAnalyticsWorkspaceKey
-        logType: 'ContainerInsights'
+      scale: {
+        minReplicas: 1
+        maxReplicas: 1
       }
     }
   }
 }
 
-output containerGroupName string = containerGroup.name
-output containerFqdn string = containerGroup.properties.ipAddress.fqdn
+output containerAppName string = containerApp.name
+output containerFqdn string = containerApp.properties.configuration.ingress.fqdn

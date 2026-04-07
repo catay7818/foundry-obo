@@ -165,8 +165,8 @@ module foundry 'modules/foundry.bicep' = {
   }
 }
 
-// ACI Module (Foundry OBO Agent)
-module aciModule 'modules/aci.bicep' = {
+// Container App Module (Foundry OBO Agent)
+module aciModule 'modules/agent-container-app.bicep' = {
   name: 'aci-deployment'
   params: {
     location: location
