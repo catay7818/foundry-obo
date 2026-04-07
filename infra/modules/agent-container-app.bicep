@@ -45,6 +45,9 @@ param logAnalyticsWorkspaceId string
 @secure()
 param logAnalyticsWorkspaceKey string
 
+@description('URL of the Static Web App used as the allowed CORS origin')
+param staticWebAppUrl string = ''
+
 var containerAppEnvName = '${projectName}-cae-${uniqueSuffix}'
 var containerAppName = '${projectName}-agent-${uniqueSuffix}'
 var imageName = '${acrLoginServer}/foundry-obo-agent:latest'
@@ -113,6 +116,12 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
         external: true
         targetPort: 8088
         transport: 'auto'
+        corsPolicy: {
+          allowedOrigins: empty(staticWebAppUrl) ? [] : [staticWebAppUrl]
+          allowedHeaders: ['*']
+          allowedMethods: ['*']
+          allowCredentials: true
+        }
       }
       secrets: [
         {

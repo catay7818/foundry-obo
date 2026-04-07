@@ -162,7 +162,6 @@ module foundry 'modules/foundry.bicep' = {
     keyVaultName: keyVaultName
     storageAccountName: storageAccountName
     acrName: acrModule.outputs.acrName
-    agentContainerPrincipalId: aciModule.outputs.containerSystemPrincipalId
   }
 }
 
@@ -184,6 +183,7 @@ module aciModule 'modules/agent-container-app.bicep' = {
     oboScope: agentOboScope
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: logAnalyticsWorkspace.listKeys().primarySharedKey
+    staticWebAppUrl: 'https://wonderful-hill-0e770e11e.6.azurestaticapps.net'
   }
 }
 

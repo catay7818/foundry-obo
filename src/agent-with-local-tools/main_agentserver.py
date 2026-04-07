@@ -73,7 +73,10 @@ class OBOCustomAgent(FoundryCBAgent):
         self.app.add_middleware(HttpRequestAgentRunContextMiddleware, agent=self)
         self.app.add_middleware(
             CORSMiddleware,
-            allow_origins=["http://localhost:5173", "https://obo-agent-auwz6k237u2d6.blackrock-40cfb740.westus.azurecontainerapps.io"],
+            allow_origins=[
+                "http://localhost:5173",
+                "https://wonderful-hill-0e770e11e.6.azurestaticapps.net",
+            ],
             allow_methods=["*"],
             allow_headers=["*"],
         )
