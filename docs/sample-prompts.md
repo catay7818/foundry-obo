@@ -12,5 +12,5 @@
 
 ## Sales
 
-* Which product generated the highest revenue in Q1?
+* Which product had the most sales in Q1?
 * What was the total revenue for the West region across all quarters?
