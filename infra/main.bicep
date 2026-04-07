@@ -193,7 +193,7 @@ module staticWebAppModule 'modules/staticwebapp.bicep' = {
     location: 'westus2'
     projectName: projectName
     uniqueSuffix: uniqueSuffix
-    agentUrl: 'https://obo-agent-auwz6k237u2d6.westus.azurecontainer.io' // 'https://${aciModule.outputs.containerFqdn}'
+    agentUrl: 'https://${aciModule.outputs.containerFqdn}'
   }
 }
 

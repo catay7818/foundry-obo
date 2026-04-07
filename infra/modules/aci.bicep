@@ -107,7 +107,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
           }
           ports: [
             {
-              port: 8000
+              port: 8088
               protocol: 'TCP'
             }
           ]
@@ -149,7 +149,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       dnsNameLabel: '${projectName}-agent-${uniqueSuffix}'
       ports: [
         {
-          port: 8000
+          port: 8088
           protocol: 'TCP'
         }
       ]
