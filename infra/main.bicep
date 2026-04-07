@@ -162,6 +162,7 @@ module foundry 'modules/foundry.bicep' = {
     keyVaultName: keyVaultName
     storageAccountName: storageAccountName
     acrName: acrModule.outputs.acrName
+    agentContainerPrincipalId: aciModule.outputs.containerSystemPrincipalId
   }
 }
 

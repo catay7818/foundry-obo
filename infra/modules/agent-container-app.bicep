@@ -95,7 +95,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
   location: location
   dependsOn: [acrPullRoleAssignment]
   identity: {
-    type: 'UserAssigned'
+    type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
       '${containerIdentity.id}': {}
     }
@@ -172,3 +172,4 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
 
 output containerAppName string = containerApp.name
 output containerFqdn string = containerApp.properties.configuration.ingress.fqdn
+output containerSystemPrincipalId string = containerApp.identity.principalId
