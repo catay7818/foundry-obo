@@ -123,6 +123,15 @@ module cosmosModule 'modules/cosmos.bicep' = {
   }
 }
 
+// Cosmos DB Media Module
+module cosmosMediaModule 'modules/cosmos-media.bicep' = {
+  name: 'cosmos-media-deployment'
+  params: {
+    cosmosAccountName: cosmosModule.outputs.cosmosAccountName
+    databaseName: cosmosModule.outputs.databaseName
+  }
+}
+
 // Function App Module
 module functionModule 'modules/function.bicep' = {
   name: 'function-deployment'
