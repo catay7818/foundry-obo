@@ -28,5 +28,8 @@
         <None Include="SampleData\*.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+<None Include="SampleData\media\*.json">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+</None>
     </ItemGroup>
 </Project>
