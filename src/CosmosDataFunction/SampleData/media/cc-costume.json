@@ -1,0 +1,61 @@
+[
+    {
+        "id": "cc-costume-CST001",
+        "type": "costume",
+        "show": "Crown & Chaos",
+        "costume_id": "CST001",
+        "character": "Lady Aveline",
+        "item": "Victorian gold brocade ensemble",
+        "scene": "Royal banquet — Episode 8",
+        "status": "Cleared from wardrobe",
+        "fitting_scheduled": true,
+        "fitting_date": "2026-04-09",
+        "fitting_time": "10:00 AM",
+        "fitting_end_time": null,
+        "designer_notes": "Bodice alteration complete. Final press needed day before shoot."
+    },
+    {
+        "id": "cc-costume-CST002",
+        "type": "costume",
+        "show": "Crown & Chaos",
+        "costume_id": "CST002",
+        "character": "Lord Harwick",
+        "item": "Royal navy military dress coat",
+        "scene": "Royal banquet — Episode 8",
+        "status": "Ready",
+        "fitting_scheduled": true,
+        "fitting_date": "2026-04-09",
+        "fitting_time": "02:00 PM",
+        "fitting_end_time": null,
+        "designer_notes": "Epaulettes replaced. Approved by director."
+    },
+    {
+        "id": "cc-costume-CST003",
+        "type": "costume",
+        "show": "Crown & Chaos",
+        "costume_id": "CST003",
+        "character": "Background extras (x6)",
+        "item": "Period servant livery — mixed",
+        "scene": "Royal banquet — Episode 8",
+        "status": "In prep",
+        "fitting_scheduled": true,
+        "fitting_date": "2026-04-10",
+        "fitting_time": "09:00 AM",
+        "fitting_end_time": "12:00 PM",
+        "designer_notes": "Six costumes — 3 footmen, 2 chambermaids, 1 butler. Buttons sourced from archive stock."
+    },
+    {
+        "id": "cc-costume-CST004",
+        "type": "costume",
+        "show": "Crown & Chaos",
+        "costume_id": "CST004",
+        "character": "Duchess of Verne",
+        "item": "Lavender silk court gown",
+        "scene": "Coronation — Episode 10",
+        "status": "In construction",
+        "fitting_scheduled": false,
+        "fitting_date": null,
+        "fitting_end_time": null,
+        "designer_notes": "Hand-embroidery in progress. Estimated completion April 20."
+    }
+]

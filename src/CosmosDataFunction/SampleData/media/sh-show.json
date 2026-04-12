@@ -1,0 +1,58 @@
+[
+    {
+        "id": "sh-show-meta",
+        "type": "show_metadata",
+        "show": "Stellar Horizons",
+        "title": "Stellar Horizons",
+        "genre": "Sci-Fi Drama",
+        "season": 2,
+        "network": "NovaCast",
+        "showrunner": "Diana Voss",
+        "production_company": "Apex Studios",
+        "studio_location": "Burbank, CA"
+    },
+    {
+        "id": "sh-cast-C001",
+        "type": "cast",
+        "show": "Stellar Horizons",
+        "cast_id": "C001",
+        "character": "Marcus Vell",
+        "actor": "James Okafor",
+        "role_type": "Lead",
+        "availability": "Full season",
+        "agent_contact": "talent@vanguardagency.com"
+    },
+    {
+        "id": "sh-cast-C002",
+        "type": "cast",
+        "show": "Stellar Horizons",
+        "cast_id": "C002",
+        "character": "Dr. Orin",
+        "actor": "Priya Nair",
+        "role_type": "Supporting",
+        "availability": "Episodes 1-8",
+        "agent_contact": "priya@staragency.com"
+    },
+    {
+        "id": "sh-cast-C003",
+        "type": "cast",
+        "show": "Stellar Horizons",
+        "cast_id": "C003",
+        "character": "Commander Zale",
+        "actor": "Leo Hartmann",
+        "role_type": "Supporting",
+        "availability": "Full season",
+        "agent_contact": "leo@nexustalent.com"
+    },
+    {
+        "id": "sh-cast-C004",
+        "type": "cast",
+        "show": "Stellar Horizons",
+        "cast_id": "C004",
+        "character": "Aria-7",
+        "actor": "Simone Delacroix",
+        "role_type": "Recurring",
+        "availability": "Episodes 3, 5, 7, 9",
+        "agent_contact": "simone@elitecast.com"
+    }
+]

@@ -1,0 +1,58 @@
+[
+    {
+        "id": "cc-show-meta",
+        "type": "show_metadata",
+        "show": "Crown & Chaos",
+        "title": "Crown & Chaos",
+        "genre": "Period Drama",
+        "season": 1,
+        "network": "HeritageMax",
+        "showrunner": "Claire Ashworth",
+        "production_company": "Thornfield Productions",
+        "studio_location": "London, UK"
+    },
+    {
+        "id": "cc-cast-C001",
+        "type": "cast",
+        "show": "Crown & Chaos",
+        "cast_id": "C001",
+        "character": "Lady Aveline",
+        "actor": "Helena Moore",
+        "role_type": "Lead",
+        "availability": "Full season",
+        "agent_contact": "hmoore@crowntalent.co.uk"
+    },
+    {
+        "id": "cc-cast-C002",
+        "type": "cast",
+        "show": "Crown & Chaos",
+        "cast_id": "C002",
+        "character": "Lord Harwick",
+        "actor": "Edmund St. Claire",
+        "role_type": "Lead",
+        "availability": "Full season",
+        "agent_contact": "edmund@imperialagency.co.uk"
+    },
+    {
+        "id": "cc-cast-C003",
+        "type": "cast",
+        "show": "Crown & Chaos",
+        "cast_id": "C003",
+        "character": "Duchess of Verne",
+        "actor": "Francesca Bellini",
+        "role_type": "Supporting",
+        "availability": "Episodes 4-10",
+        "agent_contact": "fbellini@europeancast.com"
+    },
+    {
+        "id": "cc-cast-C004",
+        "type": "cast",
+        "show": "Crown & Chaos",
+        "cast_id": "C004",
+        "character": "Thomas Crane",
+        "actor": "Nigel Ashby",
+        "role_type": "Recurring",
+        "availability": "Episodes 1, 5, 8",
+        "agent_contact": "nigel@studioagents.co.uk"
+    }
+]

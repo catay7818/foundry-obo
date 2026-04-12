@@ -1,0 +1,192 @@
+[
+    {
+        "id": "cc-shoot-ep8",
+        "type": "shoot_schedule",
+        "show": "Crown & Chaos",
+        "episode": 8,
+        "episode_title": "The Gilded Cage",
+        "shoot_dates": [
+            "2026-04-14",
+            "2026-04-15"
+        ],
+        "location": "Thornfield Manor (pending) / Studio B (backup)",
+        "call_time": "07:00 AM",
+        "wrap_time": "08:00 PM",
+        "cast_on_set": [
+            "C001",
+            "C002",
+            "C003"
+        ],
+        "director": "Rachel Bloom",
+        "status": "Minor delay — permit pending"
+    },
+    {
+        "id": "cc-shoot-ep9",
+        "type": "shoot_schedule",
+        "show": "Crown & Chaos",
+        "episode": 9,
+        "episode_title": "A Quiet Betrayal",
+        "shoot_dates": [
+            "2026-04-28"
+        ],
+        "location": "Hyde Park, London",
+        "call_time": "05:30 AM",
+        "wrap_time": "02:00 PM",
+        "cast_on_set": [
+            "C001",
+            "C004"
+        ],
+        "director": "Rachel Bloom",
+        "status": "On track"
+    },
+    {
+        "id": "cc-shoot-ep10",
+        "type": "shoot_schedule",
+        "show": "Crown & Chaos",
+        "episode": 10,
+        "episode_title": "The Crown Falls",
+        "shoot_dates": [
+            "2026-05-05",
+            "2026-05-06"
+        ],
+        "location": "Hampton Court Palace / Stage 7 (backup)",
+        "call_time": "06:00 AM",
+        "wrap_time": "09:00 PM",
+        "cast_on_set": [
+            "C001",
+            "C002",
+            "C003"
+        ],
+        "director": "Rachel Bloom",
+        "status": "Scheduled"
+    },
+    {
+        "id": "cc-permit-LP001",
+        "type": "location_permit",
+        "show": "Crown & Chaos",
+        "permit_id": "LP001",
+        "location": "Thornfield Manor, Yorkshire",
+        "episodes": [
+            7,
+            8
+        ],
+        "shoot_dates": [
+            "2026-04-14",
+            "2026-04-15"
+        ],
+        "permit_status": "Pending council approval",
+        "applied_date": "2026-03-20",
+        "expected_decision": "2026-04-11",
+        "backup_plan": "Studio B interior set on standby",
+        "backup_decision_deadline": "2026-04-11",
+        "notes": "Minor delay flagged. Council reviewing heritage site access agreement."
+    },
+    {
+        "id": "cc-permit-LP002",
+        "type": "location_permit",
+        "show": "Crown & Chaos",
+        "permit_id": "LP002",
+        "location": "Hyde Park, London",
+        "episodes": [
+            9
+        ],
+        "shoot_dates": [
+            "2026-04-28"
+        ],
+        "permit_status": "Approved",
+        "applied_date": "2026-03-01",
+        "approved_date": "2026-03-28",
+        "backup_plan": null,
+        "notes": "Early morning shoot. Crew access from 5:00 AM."
+    },
+    {
+        "id": "cc-permit-LP003",
+        "type": "location_permit",
+        "show": "Crown & Chaos",
+        "permit_id": "LP003",
+        "location": "Hampton Court Palace",
+        "episodes": [
+            10
+        ],
+        "shoot_dates": [
+            "2026-05-05",
+            "2026-05-06"
+        ],
+        "permit_status": "In negotiation",
+        "applied_date": "2026-04-01",
+        "expected_decision": "2026-04-20",
+        "backup_plan": "Constructed throne room set at Stage 7",
+        "notes": "Historic Royal Palaces liaison engaged."
+    },
+    {
+        "id": "cc-budget-summary",
+        "type": "budget_summary",
+        "show": "Crown & Chaos",
+        "currency": "USD",
+        "total_season_budget": 16200000,
+        "spent_to_date": 9876000,
+        "remaining": 6324000,
+        "overall_variance_percent": 8.3,
+        "variance_status": "Requires attention",
+        "cost_overrun_drivers": [
+            "Location reshoots — Episodes 4 and 6",
+            "Costume replacements — coronation sequence (damaged on set)"
+        ],
+        "next_budget_review_date": "2026-04-11",
+        "notes": "Episode 9 spend must be tightly controlled. Greenlit spend on Episode 10 to be held pending review."
+    },
+    {
+        "id": "cc-approval-001",
+        "type": "production_approval",
+        "show": "Crown & Chaos",
+        "item": "Budget review before Episode 9 greenlit spend",
+        "deadline": "2026-04-11",
+        "assigned_to": "Jordan Mack",
+        "status": "Pending"
+    },
+    {
+        "id": "cc-approval-002",
+        "type": "production_approval",
+        "show": "Crown & Chaos",
+        "item": "Thornfield Manor permit decision or backup confirmation",
+        "deadline": "2026-04-11",
+        "assigned_to": "Jordan Mack",
+        "status": "Awaiting council"
+    },
+    {
+        "id": "cc-script-ep8",
+        "type": "episode_script",
+        "show": "Crown & Chaos",
+        "episode": 8,
+        "title": "The Gilded Cage",
+        "draft_version": "Final Lock",
+        "writer": "Sophie Hawkes",
+        "page_count": 56,
+        "synopsis": "Lady Aveline navigates the politics of the royal banquet while Lord Harwick uncovers a conspiracy against the crown. A forbidden letter changes the course of their alliance.",
+        "key_scenes": [
+            "Royal banquet grand entrance — INT. banquet hall (pp. 6-12)",
+            "Lady Aveline and Lord Harwick private exchange — INT. antechamber (pp. 28-34)",
+            "The letter revealed — INT. library (pp. 49-54)"
+        ],
+        "script_status": "Locked",
+        "last_updated": "2026-04-02"
+    },
+    {
+        "id": "cc-script-ep9",
+        "type": "episode_script",
+        "show": "Crown & Chaos",
+        "episode": 9,
+        "title": "A Quiet Betrayal",
+        "draft_version": "Draft 2",
+        "writer": "Marcus Webb",
+        "page_count": 53,
+        "synopsis": "Thomas Crane resurfaces with evidence that could topple the Harwick name. Lady Aveline must choose loyalty or survival.",
+        "key_scenes": [
+            "Park confrontation — EXT. Hyde Park (pp. 10-16)",
+            "Aveline's monologue — INT. bedchamber (pp. 35-40)",
+            "Crane's ultimatum — INT. study (pp. 48-52)"
+        ],
+        "script_status": "In revision",
+        "last_updated": "2026-04-06"
+    }
+]

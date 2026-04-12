@@ -1,0 +1,236 @@
+[
+    {
+        "id": "sh-shoot-ep5",
+        "type": "shoot_schedule",
+        "show": "Stellar Horizons",
+        "episode": 5,
+        "episode_title": "Zero Gravity",
+        "shoot_dates": [
+            "2026-04-14",
+            "2026-04-15",
+            "2026-04-16"
+        ],
+        "stage": "Stage 4, Burbank",
+        "call_time": "06:00 AM",
+        "wrap_time": "08:00 PM",
+        "cast_on_set": [
+            "C001",
+            "C002"
+        ],
+        "vfx_unit_joining": "2026-04-15",
+        "vfx_sequence": "Zero-gravity corridor sequence",
+        "director": "Mia Tanaka",
+        "status": "On track"
+    },
+    {
+        "id": "sh-shoot-ep6",
+        "type": "shoot_schedule",
+        "show": "Stellar Horizons",
+        "episode": 6,
+        "episode_title": "The Rift",
+        "shoot_dates": [
+            "2026-04-21",
+            "2026-04-22",
+            "2026-04-23",
+            "2026-04-24"
+        ],
+        "stage": "Stage 2, Burbank",
+        "call_time": "07:00 AM",
+        "wrap_time": "09:00 PM",
+        "cast_on_set": [
+            "C001",
+            "C003",
+            "C004"
+        ],
+        "vfx_unit_joining": "2026-04-23",
+        "vfx_sequence": "Wormhole entry sequence",
+        "director": "Mia Tanaka",
+        "status": "Prep in progress"
+    },
+    {
+        "id": "sh-shoot-ep7",
+        "type": "shoot_schedule",
+        "show": "Stellar Horizons",
+        "episode": 7,
+        "episode_title": "Echoes",
+        "shoot_dates": [
+            "2026-04-28",
+            "2026-04-29",
+            "2026-04-30"
+        ],
+        "stage": "Stage 4, Burbank",
+        "call_time": "06:30 AM",
+        "wrap_time": "08:30 PM",
+        "cast_on_set": [
+            "C001",
+            "C002",
+            "C004"
+        ],
+        "vfx_unit_joining": null,
+        "vfx_sequence": null,
+        "director": "Carlos Mendes",
+        "status": "Scheduled"
+    },
+    {
+        "id": "sh-vfx-summary",
+        "type": "vfx_budget_summary",
+        "show": "Stellar Horizons",
+        "currency": "USD",
+        "total_approved": 4200000,
+        "spent_to_date": 1890000,
+        "remaining": 2310000,
+        "variance_percent": 2.1,
+        "variance_status": "Within acceptable range",
+        "overtime_notes": "Ep 2-4 overtime on VFX shoot days drove minor overrun. Within season variance threshold."
+    },
+    {
+        "id": "sh-vfx-ep1",
+        "type": "vfx_budget_episode",
+        "show": "Stellar Horizons",
+        "episode": 1,
+        "approved": 420000,
+        "actual": 415000,
+        "status": "Closed"
+    },
+    {
+        "id": "sh-vfx-ep2",
+        "type": "vfx_budget_episode",
+        "show": "Stellar Horizons",
+        "episode": 2,
+        "approved": 380000,
+        "actual": 392000,
+        "status": "Closed"
+    },
+    {
+        "id": "sh-vfx-ep3",
+        "type": "vfx_budget_episode",
+        "show": "Stellar Horizons",
+        "episode": 3,
+        "approved": 510000,
+        "actual": 522000,
+        "status": "Closed"
+    },
+    {
+        "id": "sh-vfx-ep4",
+        "type": "vfx_budget_episode",
+        "show": "Stellar Horizons",
+        "episode": 4,
+        "approved": 480000,
+        "actual": 488000,
+        "status": "Closed"
+    },
+    {
+        "id": "sh-vfx-ep5",
+        "type": "vfx_budget_episode",
+        "show": "Stellar Horizons",
+        "episode": 5,
+        "approved": 560000,
+        "actual": 73000,
+        "status": "In progress"
+    },
+    {
+        "id": "sh-vfx-ep6",
+        "type": "vfx_budget_episode",
+        "show": "Stellar Horizons",
+        "episode": 6,
+        "approved": 620000,
+        "actual": 0,
+        "status": "Not started"
+    },
+    {
+        "id": "sh-vfx-ep7",
+        "type": "vfx_budget_episode",
+        "show": "Stellar Horizons",
+        "episode": 7,
+        "approved": 440000,
+        "actual": 0,
+        "status": "Not started"
+    },
+    {
+        "id": "sh-vfx-ep8",
+        "type": "vfx_budget_episode",
+        "show": "Stellar Horizons",
+        "episode": 8,
+        "approved": 420000,
+        "actual": 0,
+        "status": "Not started"
+    },
+    {
+        "id": "sh-vfx-ep9",
+        "type": "vfx_budget_episode",
+        "show": "Stellar Horizons",
+        "episode": 9,
+        "approved": 370000,
+        "actual": 0,
+        "status": "Not started"
+    },
+    {
+        "id": "sh-budget-summary",
+        "type": "budget_summary",
+        "show": "Stellar Horizons",
+        "currency": "USD",
+        "total_season_budget": 18500000,
+        "spent_to_date": 8695000,
+        "remaining": 9805000,
+        "overall_variance_percent": 2.1,
+        "variance_status": "Within threshold",
+        "cost_overrun_drivers": [
+            "VFX overtime on shoot days Ep 2-4"
+        ],
+        "next_budget_review_date": "2026-04-18"
+    },
+    {
+        "id": "sh-approval-001",
+        "type": "production_approval",
+        "show": "Stellar Horizons",
+        "item": "VFX pre-rig sign-off for Episode 5",
+        "deadline": "2026-04-12",
+        "assigned_to": "Jordan Mack",
+        "status": "Pending"
+    },
+    {
+        "id": "sh-approval-002",
+        "type": "production_approval",
+        "show": "Stellar Horizons",
+        "item": "Overtime crew rate approval for Episode 6",
+        "deadline": "2026-04-15",
+        "assigned_to": "Jordan Mack",
+        "status": "Pending"
+    },
+    {
+        "id": "sh-script-ep5",
+        "type": "episode_script",
+        "show": "Stellar Horizons",
+        "episode": 5,
+        "title": "Zero Gravity",
+        "draft_version": "Final Lock",
+        "writer": "Tara Cho",
+        "page_count": 54,
+        "synopsis": "Marcus and Dr. Orin attempt to repair the ship's gravity core while under fire from the Velthari fleet. A shocking revelation about Dr. Orin's past changes everything.",
+        "key_scenes": [
+            "Zero-gravity corridor chase (pp. 12-18)",
+            "Marcus vs. Velthari commander standoff (pp. 32-38)",
+            "Dr. Orin's confession — INT. med-bay (pp. 48-52)"
+        ],
+        "script_status": "Locked",
+        "last_updated": "2026-04-01"
+    },
+    {
+        "id": "sh-script-ep6",
+        "type": "episode_script",
+        "show": "Stellar Horizons",
+        "episode": 6,
+        "title": "The Rift",
+        "draft_version": "Draft 3",
+        "writer": "James Olu",
+        "page_count": 58,
+        "synopsis": "The crew discovers a wormhole that could take them home — but Commander Zale suspects it's a trap. Aria-7's programming begins to malfunction.",
+        "key_scenes": [
+            "Wormhole entry sequence — EXT. space (pp. 8-14)",
+            "Aria-7 glitch scene — INT. bridge (pp. 29-33)",
+            "Zale's distress signal — INT. comms bay (pp. 50-56)"
+        ],
+        "script_status": "In revision",
+        "last_updated": "2026-04-07"
+    }
+]
