@@ -30,10 +30,13 @@ async def query_data_on_behalf_of_user(
     bearer_token: str = None,
 ):
     """
-    This tool queries data from a container (Finance, HR, or Sales) by invoking an Azure Function on behalf of the current user.
+    This tool queries data from a container by invoking an Azure Function on behalf of the current user.
+    Supported containers: Finance, HR, Sales (business data) and sh-show, sh-production, sh-costume
+    (Stellar Horizons), cc-show, cc-production, cc-costume (Crown & Chaos).
 
     Args:
-        container: The name of the container to query (Finance, HR, or Sales)
+        container: The name of the container to query (Finance, HR, Sales, sh-show, sh-production,
+            sh-costume, cc-show, cc-production, or cc-costume)
         query: Optional SQL query to filter data. If not provided, returns all data.
         bearer_token: (Optional) The bearer token to use to retrieve an OBO token for the user.
 
@@ -47,7 +50,17 @@ async def query_data_on_behalf_of_user(
         print("[QUERY] No custom query, will use: SELECT * FROM c")
 
     # Validate container name
-    valid_containers = ["Finance", "HR", "Sales"]
+    valid_containers = [
+        "Finance",
+        "HR",
+        "Sales",
+        "sh-show",
+        "sh-production",
+        "sh-costume",
+        "cc-show",
+        "cc-production",
+        "cc-costume",
+    ]
     if container not in valid_containers:
         print(f"[QUERY] Invalid container name: {container}")
         return f"Error: Invalid container '{container}'. Must be one of: {', '.join(valid_containers)}"

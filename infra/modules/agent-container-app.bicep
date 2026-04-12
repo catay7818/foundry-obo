@@ -16,6 +16,9 @@ param acrLoginServer string
 @description('Azure Container Registry resource name (used for RBAC scoping)')
 param acrName string
 
+@description('Container image tag / version to deploy')
+param imageTag string = 'latest'
+
 @description('Foundry project endpoint URL')
 param projectEndpoint string
 
@@ -52,7 +55,7 @@ var allowedCorsOrigins = [
 
 var containerAppEnvName = '${projectName}-cae-${uniqueSuffix}'
 var containerAppName = '${projectName}-agent-${uniqueSuffix}'
-var imageName = '${acrLoginServer}/foundry-obo-agent:latest'
+var imageName = '${acrLoginServer}/foundry-obo-agent:${imageTag}'
 
 // User-assigned managed identity for ACR image pull
 resource containerIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {

@@ -30,6 +30,9 @@ param agentOboScope string
 @secure()
 param agentClientSecret string
 
+@description('Container image tag / version to deploy for the agent')
+param agentImageTag string = 'latest'
+
 var uniqueSuffix = uniqueString(resourceGroup().id)
 var appInsightsName = '${projectName}-appinsights'
 var storageAccountName = '${replace(projectName, '-', '')}st${uniqueSuffix}'
@@ -201,6 +204,7 @@ module aciModule 'modules/agent-container-app.bicep' = {
     clientId: agentClientId
     clientSecret: agentClientSecret
     oboScope: agentOboScope
+    imageTag: agentImageTag
     logAnalyticsWorkspaceId: logAnalyticsWorkspace.properties.customerId
     logAnalyticsWorkspaceKey: logAnalyticsWorkspace.listKeys().primarySharedKey
   }
