@@ -160,6 +160,17 @@ module rbacModule 'modules/rbac.bicep' = {
   }
 }
 
+// RBAC Media Module
+module rbacMediaModule 'modules/rbac-media.bicep' = {
+  name: 'rbac-media-deployment'
+  dependsOn: [cosmosMediaModule]
+  params: {
+    cosmosAccountName: cosmosModule.outputs.cosmosAccountName
+    databaseName: cosmosModule.outputs.databaseName
+    functionAppPrincipalId: functionModule.outputs.functionAppPrincipalId
+  }
+}
+
 module foundry 'modules/foundry.bicep' = {
   name: 'foundry-deployment'
   dependsOn: [appInsights, storageAccount, keyVault]
