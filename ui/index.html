@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Foundry OBO Chat</title>
+    <title>Media AI Assistant</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -11,16 +11,19 @@
       <!-- Login Screen -->
       <div id="login-screen" class="screen">
         <div class="login-card">
-          <h1>Foundry OBO Chat</h1>
-        <p>Sign in with your Microsoft account to continue.</p>
-        <button id="login-btn" class="btn btn-primary">Sign in</button>
+          <h1>Media AI Assistant</h1>
+          <p>
+            Sign in with your Microsoft account to access production data for
+            your shows.
+          </p>
+          <button id="login-btn" class="btn btn-primary">Sign in</button>
         </div>
       </div>
 
       <!-- Chat Screen -->
       <div id="chat-screen" class="screen hidden">
         <header>
-          <h1>Foundry OBO Chat</h1>
+          <h1>Media AI Assistant</h1>
           <div class="user-info">
             <span id="user-name"></span>
             <button id="logout-btn" class="btn btn-secondary">Sign out</button>
@@ -31,7 +34,7 @@
           <input
             type="text"
             id="chat-input"
-            placeholder="Ask about Finance, HR, or Sales data..."
+            placeholder="Ask about your shows..."
             autocomplete="off"
             required
           />

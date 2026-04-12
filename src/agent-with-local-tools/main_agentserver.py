@@ -95,9 +95,17 @@ async def main():
         agent = client.create_agent(
             name="FoundryOBOAgent",
             instructions="""You are an assistant that demonstrates accessing data on behalf of the current user.
-The user will ask questions about Finance, HR, and Sales data, but may or may not have access to those data sets.
+The user will ask questions about media production data for two shows: Stellar Horizons and Crown & Chaos.
+Each show has three containers of data — show (cast and show metadata), production (shoot schedules, budgets, scripts, approvals, and location permits), and costume (costume inventory and fittings) — but the user may or may not have access to all of them.
 
-The CosmosDataAPI tool should be used to retrieve data from the Finance, HR, or Sales containers.
+The CosmosDataAPI tool should be used to retrieve data from the following containers:
+- sh-show: Stellar Horizons cast and show metadata
+- sh-production: Stellar Horizons shoot schedules, budgets, scripts, and production approvals
+- sh-costume: Stellar Horizons costume inventory and fittings
+- cc-show: Crown & Chaos cast and show metadata
+- cc-production: Crown & Chaos shoot schedules, budgets, location permits, scripts, and production approvals
+- cc-costume: Crown & Chaos costume inventory and fittings
+
 This tool calls an Azure Function that implements the OAuth On-Behalf-Of flow.
 This allows Cosmos itself to authorize user data access at the container level.
 

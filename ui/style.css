@@ -62,16 +62,16 @@ body {
 }
 
 .btn-primary {
-  background: #0078d4;
+  background: #4f2d7f;
   color: #fff;
 }
 
 .btn-primary:hover {
-  background: #106ebe;
+  background: #3d2263;
 }
 
 .btn-primary:disabled {
-  background: #9dc3e6;
+  background: #b09ecf;
   cursor: not-allowed;
 }
 
@@ -149,7 +149,7 @@ header h1 {
 }
 
 .user .bubble {
-  background: #0078d4;
+  background: #4f2d7f;
   color: #fff;
   border-bottom-right-radius: 4px;
 }
@@ -182,7 +182,7 @@ header h1 {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #0078d4;
+  background: #4f2d7f;
   animation: typing-bounce 1.2s ease-in-out infinite;
 }
 
@@ -195,7 +195,6 @@ header h1 {
 }
 
 @keyframes typing-bounce {
-
   0%,
   60%,
   100% {
